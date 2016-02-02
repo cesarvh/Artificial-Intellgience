@@ -18,6 +18,7 @@ Pacman agents (in searchAgents.py).
 """
 
 import util
+from util import Stack
 
 class SearchProblem:
     """
@@ -87,7 +88,34 @@ def depthFirstSearch(problem):
     print "Start's successors:", problem.getSuccessors(problem.getStartState())
     """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    # print "Start:", problem.getStartState()
+    # print "Is the start a goal?", problem.isGoalState(problem.getStartState())
+    # print "Start's successors:", problem.getSuccessors(problem.getStartState())
+    # util.raiseNotDefined()
+
+    # how to return a path???
+
+    closed = set()
+
+    initial_state = problem.getStartState()
+    fringe = Stack()
+    fringe.push(initial_state)
+
+    while fringe.isEmpty() == False:
+        state = fringe.pop()
+        goal_state = problem.isGoalState(state)
+        if goal_state:
+            return # path
+        if state not in closed:
+            closed.add(state)
+            # get node direction
+            children = problem.getSuccessors(state)
+            for child in children:
+                action = child[0] # this puts the next state into the fringe
+                fringe.push(action)
+
+    return False
+
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
