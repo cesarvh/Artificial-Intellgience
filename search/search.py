@@ -98,21 +98,28 @@ def depthFirstSearch(problem):
     closed = set()
 
     initial_state = problem.getStartState()
-    fringe = Stack()
-    fringe.push(initial_state)
+    fringe = Stack() # stack of nodes
+    # node = (state, path)
+
+    fringe.push((initial_state, []))
 
     while fringe.isEmpty() == False:
-        state = fringe.pop()
+        node = fringe.pop()
+        state = node[0]
+        path = node[1]
         goal_state = problem.isGoalState(state)
         if goal_state:
-            return # path
+            return path
         if state not in closed:
             closed.add(state)
             # get node direction
             children = problem.getSuccessors(state)
             for child in children:
-                action = child[0] # this puts the next state into the fringe
-                fringe.push(action)
+                state = child[0]
+                action = child[1] # this puts the next state into the fringe
+                new_path = list(path)
+                new_path.append(action)
+                fringe.push((state, new_path))
 
     return False
 
