@@ -19,6 +19,7 @@ Pacman agents (in searchAgents.py).
 
 import util
 from util import Stack
+from util import Queue
 
 class SearchProblem:
     """
@@ -127,7 +128,33 @@ def depthFirstSearch(problem):
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    closed = set()
+
+    initial_state = problem.getStartState()
+    fringe = Queue() # stack of nodes
+    # node = (state, path)
+
+    fringe.push((initial_state, []))
+
+    while fringe.isEmpty() == False:
+        node = fringe.pop()
+        state = node[0]
+        path = node[1]
+        goal_state = problem.isGoalState(state)
+        if goal_state:
+            return path
+        if state not in closed:
+            closed.add(state)
+            # get node direction
+            children = problem.getSuccessors(state)
+            for child in children:
+                state = child[0]
+                action = child[1] # this puts the next state into the fringe
+                new_path = list(path)
+                new_path.append(action)
+                fringe.push((state, new_path))
+
+    return False
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
