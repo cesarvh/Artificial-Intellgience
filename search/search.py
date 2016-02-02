@@ -21,6 +21,7 @@ import util
 from util import Stack
 from util import Queue
 from util import PriorityQueue
+from util import manhattanDistance
 
 class SearchProblem:
     """
@@ -90,97 +91,104 @@ def depthFirstSearch(problem):
     print "Start's successors:", problem.getSuccessors(problem.getStartState())
     """
     "*** YOUR CODE HERE ***"
+    # print "Start:", problem.getStartState()
+    # print "Is the start a goal?", problem.isGoalState(problem.getStartState())
+    # print "Start's successors:", problem.getSuccessors(problem.getStartState())
     # util.raiseNotDefined()
 
-    closed = set() 
+    # how to return a path???
 
-    start = problem.getStartState()
-    
-    fringe = Stack()
-    fringe.push((start, []))
+    closed = set()
 
-    while (fringe.isEmpty() == False):
+    initial_state = problem.getStartState()
+    fringe = Stack() # stack of nodes
+    # node = (state, path)
+
+    fringe.push((initial_state, []))
+
+    while fringe.isEmpty() == False:
         node = fringe.pop()
         state = node[0]
-        path = node [1]
-        if (problem.isGoalState(state)):
+        path = node[1]
+        goal_state = problem.isGoalState(state)
+        if goal_state:
             return path
         if state not in closed:
             closed.add(state)
+            # get node direction
             children = problem.getSuccessors(state)
             for child in children:
                 state = child[0]
-                action = child[1]
+                action = child[1] # this puts the next state into the fringe
                 new_path = list(path)
                 new_path.append(action)
                 fringe.push((state, new_path))
 
-    return False 
+    return False
 
-        # if fringe is empty then return failture
-        # node = remove_front(fringe, strategy)
-        # if goal_test(probkblem, state[node]) then return node
-        # if state[node] is not in closed then
-        #     add state to closed
-        #     for child inn expand(state, problem) do
-        #         fringe  = insert(child-node, fringe)
-
-
-    # print "Start:", problem.getStartState()
-    # print "Is the start a goal?", problem.isGoalState(problem.getStartState())
-    # print "Start's successors:", problem.getSuccessors(problem.getStartState())
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
     closed = set()
 
-    start = problem.getStartState()
+    initial_state = problem.getStartState()
+    fringe = Queue() # stack of nodes
+    # node = (state, path)
 
-    fringe = Queue()
-    fringe.push((start, []))
+    fringe.push((initial_state, []))
 
-    while (fringe.isEmpty() == False):
+    while fringe.isEmpty() == False:
         node = fringe.pop()
         state = node[0]
         path = node[1]
-        if (problem.isGoalState(state)):
+        goal_state = problem.isGoalState(state)
+        if goal_state:
             return path
         if state not in closed:
             closed.add(state)
+            # get node direction
             children = problem.getSuccessors(state)
             for child in children:
                 state = child[0]
-                action = child[1]
+                action = child[1] # this puts the next state into the fringe
                 new_path = list(path)
                 new_path.append(action)
                 fringe.push((state, new_path))
-    return False
 
+    return False
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
     closed = set()
-    start = problem.getStartState()
-    fringe = PriorityQueue()
-    fringe.push((start, []), 0)
-    while (fringe.isEmpty() == False):
+
+    initial_state = problem.getStartState()
+    fringe = PriorityQueue() # stack of nodes
+    # node = (state, path, cost)
+
+    fringe.push((initial_state, [], 0), 0)
+
+    while fringe.isEmpty() == False:
         node = fringe.pop()
         state = node[0]
         path = node[1]
-        if (problem.isGoalState(state)):
+        parent_cost = node[2]
+        goal_state = problem.isGoalState(state)
+        if goal_state:
             return path
         if state not in closed:
             closed.add(state)
+            # get node direction
             children = problem.getSuccessors(state)
             for child in children:
                 state = child[0]
-                action = child[1]
+                action = child[1] # this puts the next state into the fringe
+                cost = child[2] + parent_cost
                 new_path = list(path)
                 new_path.append(action)
-                cost = child[2]
-                fringe.push((state, new_path), cost)
+                fringe.push((state, new_path, cost), cost)
+
     return False
 
 def nullHeuristic(state, problem=None):
@@ -193,34 +201,37 @@ def nullHeuristic(state, problem=None):
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
+
     closed = set()
 
-    start = problem.getStartState()
-    fringe = PriorityQueue()
+    initial_state = problem.getStartState()
+    fringe = PriorityQueue() # stack of nodes
+    # node = (state, path, cost)
 
-    fringe.push((start, []), heuristic(start, problem))
+    fringe.push((initial_state, [], 0), heuristic(initial_state, problem))
 
-    while (fringe.isEmpty() == False):
+    while fringe.isEmpty() == False:
         node = fringe.pop()
         state = node[0]
         path = node[1]
-        if (problem.isGoalState(state)):
+        parent_cost = node[2]
+        goal_state = problem.isGoalState(state)
+        if goal_state:
             return path
         if state not in closed:
             closed.add(state)
+            # get node direction
             children = problem.getSuccessors(state)
             for child in children:
                 state = child[0]
-                action = child[1]
+                action = child[1] # this puts the next state into the fringe
+                cost = child[2] + parent_cost
                 new_path = list(path)
                 new_path.append(action)
-                cost = child[2]
-                fringe.push((state, new_path), cost + heuristic(state, problem))
-
-
+                fringe.push((state, new_path, cost), cost + heuristic(state, problem))
 
     return False
-
+    
 
 # Abbreviations
 bfs = breadthFirstSearch
