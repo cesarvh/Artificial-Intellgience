@@ -165,14 +165,15 @@ def uniformCostSearch(problem):
 
     initial_state = problem.getStartState()
     fringe = PriorityQueue() # stack of nodes
-    # node = (state, path)
+    # node = (state, path, cost)
 
-    fringe.push((initial_state, []), 0)
+    fringe.push((initial_state, [], 0), 0)
 
     while fringe.isEmpty() == False:
         node = fringe.pop()
         state = node[0]
         path = node[1]
+        parent_cost = node[2]
         goal_state = problem.isGoalState(state)
         if goal_state:
             return path
@@ -183,10 +184,10 @@ def uniformCostSearch(problem):
             for child in children:
                 state = child[0]
                 action = child[1] # this puts the next state into the fringe
-                cost = child[2]
+                cost = child[2] + parent_cost
                 new_path = list(path)
                 new_path.append(action)
-                fringe.push((state, new_path), cost)
+                fringe.push((state, new_path, cost), cost)
 
     return False
 
@@ -200,19 +201,20 @@ def nullHeuristic(state, problem=None):
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
-    
+
     closed = set()
 
     initial_state = problem.getStartState()
     fringe = PriorityQueue() # stack of nodes
-    # node = (state, path)
+    # node = (state, path, cost)
 
-    fringe.push((initial_state, []), heuristic(initial_state, problem))
+    fringe.push((initial_state, [], 0), heuristic(initial_state, problem))
 
     while fringe.isEmpty() == False:
         node = fringe.pop()
         state = node[0]
         path = node[1]
+        parent_cost = node[2]
         goal_state = problem.isGoalState(state)
         if goal_state:
             return path
@@ -223,12 +225,13 @@ def aStarSearch(problem, heuristic=nullHeuristic):
             for child in children:
                 state = child[0]
                 action = child[1] # this puts the next state into the fringe
-                cost = child[2]
+                cost = child[2] + parent_cost
                 new_path = list(path)
                 new_path.append(action)
-                fringe.push((state, new_path), heuristic(state, problem))
+                fringe.push((state, new_path, cost), cost + heuristic(state, problem))
 
     return False
+    
 
 # Abbreviations
 bfs = breadthFirstSearch
