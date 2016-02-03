@@ -297,7 +297,7 @@ class CornersProblem(search.SearchProblem):
         """
         if (self.startingPosition in self.corners):
             self.touched_corners.append(startingPosition)
-        return (self.startingPosition, tuple(self.touched_corners) ,len(self.touched_corners))
+        return (self.startingPosition, tuple(self.touched_corners))
 
     def isGoalState(self, state):
         """
@@ -305,8 +305,7 @@ class CornersProblem(search.SearchProblem):
         """
         "*** YOUR CODE HERE ***"
         corners = state[1]
-        corners_count = state[2]
-        return corners_count == 4 and len(corners) == 4
+        return len(corners) == 4
 
     def getSuccessors(self, state):
         """
@@ -324,16 +323,15 @@ class CornersProblem(search.SearchProblem):
         for action in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
             x, y = state[0]
             state_corners = list(state[1])
-            corners_count = state[2]
             dx, dy = Actions.directionToVector(action)
             nextx, nexty = int(x + dx), int(y + dy)
             if not self.walls[nextx][nexty]:
-                nextState = ((nextx, nexty), tuple(state_corners), corners_count)
+                nextState = ((nextx, nexty), tuple(state_corners))
                 if (nextx, nexty) in self.corners:
                     if (nextx, nexty) not in state_corners:
-                        corners_count += 1
                         state_corners.append((nextx, nexty))
-                        nextState = ((nextx, nexty), tuple(state_corners), corners_count)
+                        nextState = ((nextx, nexty), tuple(state_corners))
+
                 successors.append( (nextState, action, 1) )
 
             "*** YOUR CODE HERE ***"
@@ -373,20 +371,22 @@ def cornersHeuristic(state, problem):
 
     x, y = state[0]
     visited_corners = state[1]
-    num_visited_corners = state[2]
     distances = []
+
     if problem.isGoalState(state):
         return 0
     else:
         for x2, y2 in corners:
             if (x2, y2) not in visited_corners:
-                distances.append(util.manhattanDistance((x, y) ,(x2, y2)))
-                # distances.append(getEucladianDistance(   (x, y), (x2, y2)    ))
-    return max(distances)
-    # return
+                d = util.manhattanDistance((x, y), (x2, y2)) 
+                distances.append(d )
 
-def getEucladianDistance(xy1, xy2):
-    return ((xy1[0] - xy2[0]) ** 2+ (xy1[1] - xy2[1]) ** 2) ** 0.5    
+    return max(distances)
+
+def getEucladian(xy1, xy2):
+    "The Euclidean distance heuristic for a PositionSearchProblem"
+    return ( (xy1[0] - xy2[0]) ** 2 + (xy1[1] - xy2[1]) ** 2 ) ** 0.5
+
 
 class AStarCornersAgent(SearchAgent):
     "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"
