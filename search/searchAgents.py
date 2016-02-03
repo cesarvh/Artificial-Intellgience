@@ -289,6 +289,31 @@ class CornersProblem(search.SearchProblem):
         self.missingCorners = 0
         "*** YOUR CODE HERE ***"
         self.touched_corners = []
+        self.pelletGrid = startingGameState.getFood()
+        self.height  = self.walls.height
+        self.width = self.walls.width
+        self.pelletLocations = self.getPelletLocations()
+
+        print self.pelletLocations
+
+        # print self.pelletGrid
+
+    def getPelletLocations(self):
+        x = 1 # the bottom is always empty so we start counting at the 1st index
+        y = 1 # and so is the leftmost spot so  we start counting at the 1st index
+        h = self.height - 1
+        w = self.width - 1
+        pellets = self.pelletGrid
+        locations = []
+        while (y != h):
+            x = 1
+            while (x != w):
+                if pellets[x][y] == True:
+                    locations.append((x, y))
+                x += 1
+            y += 1
+
+        return locations
 
     def getStartState(self):
         """
@@ -368,10 +393,13 @@ def cornersHeuristic(state, problem):
     """
     corners = problem.corners # These are the corner coordinates
     walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
-
+    pellets = problem.pelletLocations
+    p = problem.getPelletLocations()
     x, y = state[0]
     visited_corners = state[1]
     distances = []
+
+    ## Take into account the distance of the food pellets
 
     if problem.isGoalState(state):
         return 0
@@ -379,9 +407,63 @@ def cornersHeuristic(state, problem):
         for x2, y2 in corners:
             if (x2, y2) not in visited_corners:
                 d = util.manhattanDistance((x, y), (x2, y2)) 
-                distances.append(d )
+                # get an int of walls in the way
+                # multiply it by that integers
+                # numwalls = wallsInBetween((x,y),(x2, y2), problem) 
+                # print numwalls
+                distances.append(d)
+
 
     return max(distances)
+
+# def wallsInBetween(xy1, xy2, problem):
+#     "Gets the number of walls between a given set of points"
+#     x1, y1 = xy1
+#     x2, y2 = xy2
+#     walls = problem.walls
+
+#     # print walls
+
+#     dx = x2 - x1
+#     dy = y2 - y1
+
+#     numwalls = 0
+
+#     # if (dx == 0 and dy == 0): return 1
+#     if (dx == 0):
+#         temp = y1
+#         while temp < y2:
+#             if walls[x1][temp] == True:
+#                 numwalls += 1
+#             temp += 1
+
+#     if (dy == 0):
+#         temp = x1 
+#         while temp < x2:
+#             if walls[temp][y1] == True:
+#                 numwalls += 1
+#             temp += 1
+
+
+#     mx = abs(x1 - x2)
+#     my = abs(y1 - y2)
+
+#     ix = x1
+#     iy = y1
+#     while (ix < mx):
+#         if walls[ix][iy] == True:
+#             numwalls += 1
+#         ix += 1
+
+#     while (iy < my):
+#         if walls[ix][iy] == True:
+#             numwalls += 1
+#         iy += 1
+
+#     # print numwalls
+#     return numwalls
+
+# Also walls are a consideration, if you see a bunch of them on the way to an unvisited corner, your heuristic should frown a little more
 
 def getEucladian(xy1, xy2):
     "The Euclidean distance heuristic for a PositionSearchProblem"

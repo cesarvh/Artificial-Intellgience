@@ -210,6 +210,9 @@ def aStarSearch(problem, heuristic=nullHeuristic):
 
     fringe.push((initial_state, [], 0), heuristic(initial_state, problem))
 
+    if problem.isGoalState(initial_state):
+        return []
+
     while fringe.isEmpty() == False:
         node = fringe.pop()
         state = node[0]
