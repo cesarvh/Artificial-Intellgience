@@ -616,7 +616,6 @@ class AnyFoodSearchProblem(PositionSearchProblem):
         complete the problem definition.
         """
         x,y = state
-        foodConfiguration = self.food.asList()
         for x in self.food.asList():
             if x == state:
                 return True
