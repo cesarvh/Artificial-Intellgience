@@ -91,18 +91,11 @@ def depthFirstSearch(problem):
     print "Start's successors:", problem.getSuccessors(problem.getStartState())
     """
     "*** YOUR CODE HERE ***"
-    # print "Start:", problem.getStartState()
-    # print "Is the start a goal?", problem.isGoalState(problem.getStartState())
-    # print "Start's successors:", problem.getSuccessors(problem.getStartState())
-    # util.raiseNotDefined()
-
-    # how to return a path???
 
     closed = set()
 
     initial_state = problem.getStartState()
     fringe = Stack() # stack of nodes
-    # node = (state, path)
 
     fringe.push((initial_state, []))
 
@@ -201,7 +194,7 @@ def nullHeuristic(state, problem=None):
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
-    # print(problem)
+
     closed = set()
 
     initial_state = problem.getStartState()
@@ -231,10 +224,7 @@ def aStarSearch(problem, heuristic=nullHeuristic):
                 cost = child[2] + parent_cost
                 new_path = list(path)
                 new_path.append(action)
-                # print(state)
-                # print(child)
-                # if (heuristic(parent_state, problem) - heuristic(child_state, problem) > 1):
-                    # print("Inconsistent")
+
                 fringe.push((child_state, new_path, cost), cost + heuristic(child_state, problem))
 
     return False
