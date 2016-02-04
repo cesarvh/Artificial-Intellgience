@@ -201,7 +201,7 @@ def nullHeuristic(state, problem=None):
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
-
+    print(problem)
     closed = set()
 
     initial_state = problem.getStartState()
@@ -215,23 +215,27 @@ def aStarSearch(problem, heuristic=nullHeuristic):
 
     while fringe.isEmpty() == False:
         node = fringe.pop()
-        state = node[0]
+        parent_state = node[0]
         path = node[1]
         parent_cost = node[2]
-        goal_state = problem.isGoalState(state)
+        goal_state = problem.isGoalState(parent_state)
         if goal_state:
             return path
-        if state not in closed:
-            closed.add(state)
+        if parent_state not in closed:
+            closed.add(parent_state)
             # get node direction
-            children = problem.getSuccessors(state)
+            children = problem.getSuccessors(parent_state)
             for child in children:
-                state = child[0]
+                child_state = child[0]
                 action = child[1] # this puts the next state into the fringe
                 cost = child[2] + parent_cost
                 new_path = list(path)
                 new_path.append(action)
-                fringe.push((state, new_path, cost), cost + heuristic(state, problem))
+                # print(state)
+                # print(child)
+                if (heuristic(parent_state, problem) - heuristic(child_state, problem) > 1):
+                    print("Inconsistent")
+                fringe.push((child_state, new_path, cost), cost + heuristic(child_state, problem))
 
     return False
     

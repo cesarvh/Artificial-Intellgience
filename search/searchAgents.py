@@ -544,7 +544,32 @@ def foodHeuristic(state, problem):
     """
     position, foodGrid = state
     "*** YOUR CODE HERE ***"
-    return 0
+    #get wall count:
+    # problem.heuristicInfo['wallCount'] = problem.walls.count()
+
+    #get walls: problem.walls returns a Grid of where walls are
+    # walls = problem.walls
+
+    foodGridList = foodGrid.asList()
+    if not any(foodGridList): # everything is false
+    	return 0
+    
+    pacmanPosition = state[0]
+    # x = pacmanPosition[0]
+    # y = pacmanPosition[1]
+    mazeDistArr = []
+    # manhattDistArr = []
+    for coord in foodGridList:
+    	if coord:
+    		mazeDistArr.append(mazeDistance(pacmanPosition, coord, problem.startingGameState))
+    		# coordx = coord[0]
+    		# coordy = coord[1]
+    		# manhattanDist = abs(coordx - x) + abs(coordy - y)
+    		# manhattDistArr.append(manhattanDist)
+
+    return max(mazeDistArr)
+    # maxManDist = max(manhattDistArr)
+    # return max(maxManDist, maxMazeDist)
 
 class ClosestDotSearchAgent(SearchAgent):
     "Search for all food using a sequence of searches"
