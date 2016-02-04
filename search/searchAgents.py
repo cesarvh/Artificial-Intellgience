@@ -573,9 +573,16 @@ class ClosestDotSearchAgent(SearchAgent):
         food = gameState.getFood()
         walls = gameState.getWalls()
         problem = AnyFoodSearchProblem(gameState)
-
+        path = []
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        return search.aStarSearch(problem)
+
+##
+# Hint: The quickest way to complete findPathToClosestDot is to 
+# fill in the AnyFoodSearchProblem, which is missing its goal test.
+# Then, solve that problem with an appropriate search function. The solution should be very short!
+##
+
 
 class AnyFoodSearchProblem(PositionSearchProblem):
     """
@@ -609,9 +616,12 @@ class AnyFoodSearchProblem(PositionSearchProblem):
         complete the problem definition.
         """
         x,y = state
+        foodConfiguration = self.food.asList()
+        for x in self.food.asList():
+            if x == state:
+                return True
+        return False
 
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
 
 def mazeDistance(point1, point2, gameState):
     """
