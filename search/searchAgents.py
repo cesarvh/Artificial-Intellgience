@@ -286,34 +286,22 @@ class CornersProblem(search.SearchProblem):
                 print 'Warning: no food in corner ' + str(corner)
         self._expanded = 0 # DO NOT CHANGE; Number of search nodes expanded
         # Please add any code here which you would like to use
-        self.missingCorners = 0
         "*** YOUR CODE HERE ***"
-        self.touched_corners = []
-        self.pelletGrid = startingGameState.getFood()
-        self.height  = self.walls.height
-        self.width = self.walls.width
-        self.pelletLocations = self.getPelletLocations()
+        self.unexploredCorners = self.corners
 
-        print self.pelletLocations
+    # def getPelletLocations(self):
+        # x = 1 # the bottom is always empty so we start counting at the 1st index
+        # y = 1 # and so is the leftmost spot so  we start counting at the 1st index
+        # locations = []
+        # while (y != h):
+        #     x = 1
+        #     while (x != w):
+        #         if pellets[x][y] == True:
+        #             locations.append((x, y))
+        #         x += 1
+        #     y += 1
 
-        # print self.pelletGrid
-
-    def getPelletLocations(self):
-        x = 1 # the bottom is always empty so we start counting at the 1st index
-        y = 1 # and so is the leftmost spot so  we start counting at the 1st index
-        h = self.height - 1
-        w = self.width - 1
-        pellets = self.pelletGrid
-        locations = []
-        while (y != h):
-            x = 1
-            while (x != w):
-                if pellets[x][y] == True:
-                    locations.append((x, y))
-                x += 1
-            y += 1
-
-        return locations
+        # return locations
 
     def getStartState(self):
         """
@@ -321,8 +309,10 @@ class CornersProblem(search.SearchProblem):
         space)
         """
         if (self.startingPosition in self.corners):
-            self.touched_corners.append(startingPosition)
-        return (self.startingPosition, tuple(self.touched_corners))
+            temp = list(self.unexploredCorners)
+            temp.remove(self.startPosition)
+            self.unexploredCorners = tuple(temp)
+        return (self.startingPosition, self.unexploredCorners)
 
     def isGoalState(self, state):
         """
@@ -330,7 +320,7 @@ class CornersProblem(search.SearchProblem):
         """
         "*** YOUR CODE HERE ***"
         corners = state[1]
-        return len(corners) == 4
+        return len(corners) == 0
 
     def getSuccessors(self, state):
         """
@@ -344,22 +334,19 @@ class CornersProblem(search.SearchProblem):
         """
 
         successors = []
-
         for action in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
             x, y = state[0]
-            state_corners = list(state[1])
+            unexploredCorners = list(state[1])
+
             dx, dy = Actions.directionToVector(action)
             nextx, nexty = int(x + dx), int(y + dy)
+
             if not self.walls[nextx][nexty]:
-                nextState = ((nextx, nexty), tuple(state_corners))
-                if (nextx, nexty) in self.corners:
-                    if (nextx, nexty) not in state_corners:
-                        state_corners.append((nextx, nexty))
-                        nextState = ((nextx, nexty), tuple(state_corners))
-
+                if (nextx, nexty) in unexploredCorners:
+                    unexploredCorners.remove((nextx, nexty))
+                newCorners = tuple(unexploredCorners)
+                nextState = ((nextx, nexty), newCorners)
                 successors.append( (nextState, action, 1) )
-
-            "*** YOUR CODE HERE ***"
 
         self._expanded += 1 # DO NOT CHANGE
         return successors
@@ -391,77 +378,72 @@ def cornersHeuristic(state, problem):
     shortest path from the state to a goal of the problem; i.e.  it should be
     admissible (as well as consistent).
     """
+
     corners = problem.corners # These are the corner coordinates
     walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
-    pellets = problem.pelletLocations
-    p = problem.getPelletLocations()
+    # p = problem.getPelletLocations()
     x, y = state[0]
-    visited_corners = state[1]
-    distances = []
-
+    unexploredCorners = state[1]
+    # pellets = problem.pelletLocations
     ## Take into account the distance of the food pellets
-
+    distances = []
+    wallDistances = []
+    d = 0
     if problem.isGoalState(state):
         return 0
     else:
         for x2, y2 in corners:
-            if (x2, y2) not in visited_corners:
-                d = util.manhattanDistance((x, y), (x2, y2)) 
-                # get an int of walls in the way
-                # multiply it by that integers
-                # numwalls = wallsInBetween((x,y),(x2, y2), problem) 
-                # print numwalls
-                distances.append(d)
-
-
+            if (x2, y2) in unexploredCorners:
+                dist = util.manhattanDistance((x, y), (x2, y2))
+                distances.append(dist)
     return max(distances)
 
-# def wallsInBetween(xy1, xy2, problem):
-#     "Gets the number of walls between a given set of points"
-#     x1, y1 = xy1
-#     x2, y2 = xy2
-#     walls = problem.walls
+def wallsInBetween(xy1, xy2, problem):
+    "Gets the number of walls between a given set of points"
+    x1, y1 = xy1
+    x2, y2 = xy2
+    walls = problem.walls
 
-#     # print walls
+    # print walls
 
-#     dx = x2 - x1
-#     dy = y2 - y1
+    dx = x2 - x1
+    dy = y2 - y1
 
-#     numwalls = 0
+    numwalls = 0
 
-#     # if (dx == 0 and dy == 0): return 1
-#     if (dx == 0):
-#         temp = y1
-#         while temp < y2:
-#             if walls[x1][temp] == True:
-#                 numwalls += 1
-#             temp += 1
+    # if (dx == 0 and dy == 0): return 1
+    if (dx == 0):
+        temp = y1
+        while temp < y2:
+            if walls[x1][temp] == True:
+                numwalls += 1
+            temp += 1
 
-#     if (dy == 0):
-#         temp = x1 
-#         while temp < x2:
-#             if walls[temp][y1] == True:
-#                 numwalls += 1
-#             temp += 1
+    if (dy == 0):
+        temp = x1 
+        while temp < x2:
+            if walls[temp][y1] == True:
+                numwalls += 1
+            temp += 1
 
 
-#     mx = abs(x1 - x2)
-#     my = abs(y1 - y2)
+    mx = abs(x1 - x2)
+    my = abs(y1 - y2)
 
-#     ix = x1
-#     iy = y1
-#     while (ix < mx):
-#         if walls[ix][iy] == True:
-#             numwalls += 1
-#         ix += 1
+    ix = x1
+    iy = y1
+    while (ix < mx):
+        if walls[ix][iy] == True:
+            numwalls += 1
+        ix += 1
 
-#     while (iy < my):
-#         if walls[ix][iy] == True:
-#             numwalls += 1
-#         iy += 1
+    while (iy < my):
+        if walls[ix][iy] == True:
+            numwalls += 1
+        iy += 1
 
-#     # print numwalls
-#     return numwalls
+    # print numwalls
+    return numwalls
 
 # Also walls are a consideration, if you see a bunch of them on the way to an unvisited corner, your heuristic should frown a little more
 
