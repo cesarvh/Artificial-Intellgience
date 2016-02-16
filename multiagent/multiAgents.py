@@ -91,7 +91,7 @@ class ReflexAgent(Agent):
             return 9999999
 
         # If the nearest ghost isn't that close, don't worry about life
-        if (min(ghosts) > 5):
+        if (min(ghosts) > 3):
             radiusSum = 10
 
         foodRecip = 1/float(min(foods)) #idk why this would help but spec says soooo
@@ -102,7 +102,7 @@ class ReflexAgent(Agent):
            return successorGameState.getScore() + foodRecip
         scaredTimes = sum(newScaredTimes)
 
-        return radiusSum + successorGameState.getScore() + scaredTimes  + (foodRecip * minGhost) #+ scaredTimes
+        return radiusSum + successorGameState.getScore() + scaredTimes  + (foodRecip * minGhost)
 
 
 
