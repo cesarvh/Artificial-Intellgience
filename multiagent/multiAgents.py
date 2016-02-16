@@ -72,9 +72,39 @@ class ReflexAgent(Agent):
         newFood = successorGameState.getFood()
         newGhostStates = successorGameState.getGhostStates()
         newScaredTimes = [ghostState.scaredTimer for ghostState in newGhostStates]
+        ghostPositions = successorGameState.getGhostPositions()
+        
+        ghosts = []
+        foods = []
 
-        "*** YOUR CODE HERE ***"
-        return successorGameState.getScore()
+        radiusSum = 0
+
+        # Get the positions of the food, calc distance, then append them to a list
+        for food in newFood.asList():
+            foods.append(util.manhattanDistance(newPos, food))
+        # Get the positions of ghosts, calc distance, then put it in a list
+        for ghost in ghostPositions:
+            nextGhost = util.manhattanDistance(newPos, ghost)
+            ghosts.append(nextGhost)
+        # No foods left? You're gucci
+        if len(foods) == 0:
+            return 9999999
+
+        # If the nearest ghost isn't that close, don't worry about life
+        if (min(ghosts) > 5):
+            radiusSum = 10
+
+        foodRecip = 1/float(min(foods)) #idk why this would help but spec says soooo
+        minGhost = min(ghosts)
+
+        #No ghosts? Just move along. 
+        if len(ghosts) == 0: 
+           return successorGameState.getScore() + foodRecip
+        scaredTimes = sum(newScaredTimes)
+
+        return radiusSum + successorGameState.getScore() + scaredTimes  + (foodRecip * minGhost) #+ scaredTimes
+
+
 
 def scoreEvaluationFunction(currentGameState):
     """
