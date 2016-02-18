@@ -165,7 +165,62 @@ class MinimaxAgent(MultiAgentSearchAgent):
             Returns whether or not the game state is a losing state
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        depth = 0
+        agentIndex = 0
+        value_action = self.value(gameState, depth, agentIndex)
+        action = value_action[1]
+
+        return action
+
+    def value(self, gameState, depth, agentIndex):
+    	# TODO: assign agent #'s and update depth, what exactly are we returning -> action, make tuple
+    	if agentIndex == 0 or agentIndex == gameState.getNumAgents():
+    		agentIndex = 0
+    		depth += 1
+        # if gameState.isWin() or gameState.isLose():
+        #     return gameState.getScore()
+
+    	if self.depth == depth - 1 or gameState.isWin() or gameState.isLose():
+    		return (self.evaluationFunction(gameState), "")
+
+    	if agentIndex == 0:
+    		value_action = self.max_value(gameState, depth, agentIndex)
+
+    	else:
+    		value_action = self.min_value(gameState, depth, agentIndex)
+
+    	return value_action 
+
+    def max_value(self, gameState, depth, agentIndex):
+    	value_action = (-1 * float("inf"), "")
+    	# get successors
+    	actions = gameState.getLegalActions(agentIndex)
+    	for action in actions:
+    		successor = gameState.generateSuccessor(agentIndex, action)
+    		valuetuple_successor = self.value(successor, depth, agentIndex + 1)
+    		value_successor = valuetuple_successor[0]
+
+    		if value_successor > value_action[0]:
+    			value_action = (value_successor, action)
+    		# value_action = max(v, value(self, successor, depth, agentIndex))
+
+    	return value_action
+
+    def min_value(self, gameState, depth, agentIndex):
+    	value_action = (float("inf"), "")
+    	actions = gameState.getLegalActions(agentIndex)
+    	for action in actions:
+    		successor = gameState.generateSuccessor(agentIndex, action)
+    		valuetuple_successor = self.value(successor, depth, agentIndex + 1)
+    		value_successor = valuetuple_successor[0]
+
+    		if value_successor < value_action[0]:
+    			value_action = (value_successor, action)
+    		# value_action = max(v, value(self, successor, depth, agentIndex))
+
+    	return value_action
+
+    	
 
 class AlphaBetaAgent(MultiAgentSearchAgent):
     """
@@ -177,7 +232,71 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
           Returns the minimax action using self.depth and self.evaluationFunction
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        depth = 0
+        agentIndex = 0
+        alpha = float("-inf")
+        beta = float("inf")
+        value_action = self.value(gameState, depth, agentIndex, alpha, beta)
+        action = value_action[1]
+
+        return action
+
+    def value(self, gameState, depth, agentIndex, alpha, beta):
+    	# TODO: assign agent #'s and update depth, what exactly are we returning -> action, make tuple
+    	if agentIndex == 0 or agentIndex == gameState.getNumAgents():
+    		agentIndex = 0
+    		depth += 1
+        # if gameState.isWin() or gameState.isLose():
+        #     return gameState.getScore()
+
+    	if self.depth == depth - 1 or gameState.isWin() or gameState.isLose():
+    		return (self.evaluationFunction(gameState), "")
+
+    	if agentIndex == 0:
+    		value_action = self.max_value(gameState, depth, agentIndex, alpha, beta)
+
+    	else:
+    		value_action = self.min_value(gameState, depth, agentIndex, alpha, beta)
+
+    	return value_action 
+
+    def max_value(self, gameState, depth, agentIndex, alpha, beta):
+    	value_action = (-1 * float("inf"), "")
+    	# get successors
+    	actions = gameState.getLegalActions(agentIndex)
+    	for action in actions:
+    		successor = gameState.generateSuccessor(agentIndex, action)
+    		valuetuple_successor = self.value(successor, depth, agentIndex + 1, alpha, beta)
+    		value_successor = valuetuple_successor[0]
+
+    		if value_successor > value_action[0]:
+    			value_action = (value_successor, action)
+
+    		if value_action[0] > beta:
+    			return value_action
+
+    		alpha = max(alpha, value_successor)
+
+    	return value_action
+
+    def min_value(self, gameState, depth, agentIndex, alpha, beta):
+    	value_action = (float("inf"), "")
+    	# get successors
+    	actions = gameState.getLegalActions(agentIndex)
+    	for action in actions:
+    		successor = gameState.generateSuccessor(agentIndex, action)
+    		valuetuple_successor = self.value(successor, depth, agentIndex + 1, alpha, beta)
+    		value_successor = valuetuple_successor[0]
+
+    		if value_successor < value_action[0]:
+    			value_action = (value_successor, action)
+
+    		if value_action[0] < alpha:
+    			return value_action
+
+    		beta = min(beta, value_successor)
+
+    	return value_action
 
 class ExpectimaxAgent(MultiAgentSearchAgent):
     """
