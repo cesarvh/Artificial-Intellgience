@@ -192,7 +192,64 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
           legal moves.
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        depth = 0
+        agentIndex = 0
+        value_action = self.value(gameState, depth, agentIndex)
+        action = value_action[1]
+
+        return action
+
+
+    def value(self, gameState, depth, agentIndex):
+    	# TODO: assign agent #'s and update depth, what exactly are we returning -> action, make tuple
+    	if agentIndex == 0 or agentIndex == gameState.getNumAgents():
+    		agentIndex = 0
+
+    	if self.depth == depth:
+    		return (self.evaluationFunction(gameState), "")
+
+    	if agentIndex == 0:
+    		value_action = self.max_value(gameState, depth + 1, agentIndex)
+
+    	else:
+    		value_action = self.exp_value(gameState, depth + 1, agentIndex)
+
+    	return value_action 
+
+
+    def max_value(self, gameState, depth, agentIndex):
+    	value_action = (-1 * float("inf"), "")
+    	# get successors
+    	actions = gameState.getLegalActions(agentIndex)
+    	for action in actions:
+    		successor = gameState.generateSuccessor(agentIndex, action)
+    		valuetuple_successor = self.value(successor, depth, agentIndex + 1)
+    		value_successor = valuetuple_successor[0]
+
+    		if value_successor > value_action[0]:
+    			value_action = (value_successor, action)
+    		# value_action = max(v, value(self, successor, depth, agentIndex))
+
+    	return value_action
+
+    def exp_value(self, gameState, depth, agentIndex):
+    	value = 0
+    	actions = gameState.getLegalActions(agentIndex)
+    	if len(actions) == 0:
+    		return (self.evaluationFunction(gameState), "")
+    	probability = 1.0/float(len(actions))
+
+    	for action in actions:
+    		successor = gameState.generateSuccessor(agentIndex, action)
+	    	valuetuple_successor = self.value(successor, depth, agentIndex + 1) # contains val and action
+	    	value_successor = valuetuple_successor[0]
+	    	value = value + probability * value_successor
+
+    	return (value, "")
+
+    	
+
+
 
 def betterEvaluationFunction(currentGameState):
     """
