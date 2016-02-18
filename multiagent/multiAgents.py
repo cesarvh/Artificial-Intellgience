@@ -346,7 +346,6 @@ def betterEvaluationFunction(currentGameState):
 
     newScaredTimes = [ghostState.scaredTimer for ghostState in newGhostStates]
 
-    # print newScaredTimes
 
     pelletDistances = calculateDistances(pacmanPos, pelletPositions)
     ghostDistances = calculateDistances(pacmanPos, ghostPositions)
@@ -365,8 +364,10 @@ def betterEvaluationFunction(currentGameState):
 
     # ## Make scared ghost more favorable to go to
     if (sum(newScaredTimes) > 5):
-        runawayBonus = sum(newScaredTimes) + 10
+        runawayBonus = sum(newScaredTimes) + 15
         closestGhost = 1
+
+
 
     if (foodDistances != 0): 
         closestFood = 1.0/closestFood
@@ -377,7 +378,6 @@ def betterEvaluationFunction(currentGameState):
     if (closestGhost < 4 and closestGhost > 3 and closestPellet < 3 and scaredtimes == 0):
         total += 10
 
-    # return total
 
     return currentGameState.getScore() + ((closestPellet + closestFood) * closestGhost) + radiusSum + scaredtimes + (proximityBonus + runawayBonus)
 
