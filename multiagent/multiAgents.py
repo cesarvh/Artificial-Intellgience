@@ -323,15 +323,16 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
     	# TODO: assign agent #'s and update depth, what exactly are we returning -> action, make tuple
     	if agentIndex == 0 or agentIndex == gameState.getNumAgents():
     		agentIndex = 0
+    		depth += 1
 
-    	if self.depth == depth:
+    	if self.depth == depth - 1 or gameState.isWin() or gameState.isLose():
     		return (self.evaluationFunction(gameState), "")
 
     	if agentIndex == 0:
-    		value_action = self.max_value(gameState, depth + 1, agentIndex)
+    		value_action = self.max_value(gameState, depth, agentIndex)
 
     	else:
-    		value_action = self.exp_value(gameState, depth + 1, agentIndex)
+    		value_action = self.exp_value(gameState, depth, agentIndex)
 
     	return value_action 
 
