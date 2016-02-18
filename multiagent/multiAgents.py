@@ -293,9 +293,26 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
 
     	return (value, "")
 
+    def min_value(self, gameState, depth, agentIndex):
+        value_action = (float("inf"), "")
+
+        actions = gameState.getLegalActions(agentIndex)
+
+        for action in actions:
+            successor = gameState.generateSuccessor(agentIndex, actions)
+            valuetuple_successor = self.value(successor, depth, agentIndex + 1)
+            value_successor = valuetuple_successor[0]
+
+            if value_successor < value_action[0]:
+                value_action = (value_successor, action)
+        return value_action
     	
 
-
+def calculateDistances(pacman, items):
+    distances = []
+    for item in items:
+        distances.append(util.manhattanDistance(pacman, item))
+    return distances
 
 def betterEvaluationFunction(currentGameState):
     """
@@ -305,8 +322,81 @@ def betterEvaluationFunction(currentGameState):
       DESCRIPTION: <write something here so we know what you did>
     """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    radiusSum = 0
+    proximityBonus = 0
+    runawayBonus = 0
+    total = 0
+
+    if (currentGameState.isWin()):
+        return float("inf")
+
+    pacmanPos = currentGameState.getPacmanPosition()
+    ghostPositions = currentGameState.getGhostPositions()
+    foodPositions = currentGameState.getFood().asList()
+    pelletPositions = currentGameState.getCapsules()
+    newGhostStates = currentGameState.getGhostStates()
+    currentScore = currentGameState.getScore()
+    wallPositions = currentGameState.getWalls()
+    wallList = wallPositions.asList()
+    total += currentScore
+
+    gridFirstHalf = (wallPositions.width / 2)
+    gridSecondHalf = (wallPositions.width / 2) + 1
+
+
+    newScaredTimes = [ghostState.scaredTimer for ghostState in newGhostStates]
+
+    # print newScaredTimes
+
+    pelletDistances = calculateDistances(pacmanPos, pelletPositions)
+    ghostDistances = calculateDistances(pacmanPos, ghostPositions)
+    foodDistances = calculateDistances(pacmanPos, foodPositions)
+    
+    closestPellet = 0
+    scaredtimes = sum(newScaredTimes)
+
+    if (len(pelletDistances) != 0):
+        closestPellet = min(pelletDistances)
+        closestPellet = 1.0/closestPellet
+        # if (scaredtimes == 0): closestPellet = 0
+
+    closestFood, closestGhost = min(foodDistances), min(ghostDistances)
+
+
+    # ## Make scared ghost more favorable to go to
+    if (sum(newScaredTimes) > 5):
+        runawayBonus = sum(newScaredTimes) + 10
+        closestGhost = 1
+
+    if (foodDistances != 0): 
+        closestFood = 1.0/closestFood
+        total += closestFood * closestGhost
+
+    if (closestGhost > 3):
+        total += 50
+    if (closestGhost < 4 and closestGhost > 3 and closestPellet < 3 and scaredtimes == 0):
+        total += 10
+
+    # return total
+
+    return currentGameState.getScore() + ((closestPellet + closestFood) * closestGhost) + radiusSum + scaredtimes + (proximityBonus + runawayBonus)
+
 
 # Abbreviation
 better = betterEvaluationFunction
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
