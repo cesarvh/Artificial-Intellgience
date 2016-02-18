@@ -104,8 +104,6 @@ class ReflexAgent(Agent):
 
         return radiusSum + successorGameState.getScore() + scaredTimes  + (foodRecip * minGhost)
 
-
-
 def scoreEvaluationFunction(currentGameState):
     """
       This default evaluation function just returns the score of the state.
@@ -165,7 +163,82 @@ class MinimaxAgent(MultiAgentSearchAgent):
             Returns whether or not the game state is a losing state
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        agentsTotal = gameState.getNumAgents()
+        # scores = [valFunc(gameState, action) for action in legalMoves]
+        print "======== C A L L =========="
+        # print gameState.generateSuccessor(0, "West")
+
+        actions = gameState.getLegalActions()
+
+        def valFunc(state, turn, depth):
+            turn = turn % agentsTotal
+            if state.isWin() or state.isLose():
+                return state.getScore()
+            if turn == 0:
+                return maxValue(state, turn, depth)
+            else:
+                return minValue(state, turn, depth)
+        # vals = [valFunc(gameState.generateSuccessor(0, action), 0) for action in actions]
+# 
+        def maxValue(state, turn, depth):
+            v = float("-inf")
+            if depth == self.depth:
+                return v
+            actions = state.getLegalActions()
+            maxLeaves = [ valFunc(state.generateSuccessor(turn, action), turn + 1, depth + 1) for action in actions]
+            v = max(v, max(maxLeaves))
+            return v
+
+
+        def minValue(state, turn, depth):
+            v = float("+inf")
+            if depth == self.depth:
+                return v
+            actions = state.getLegalActions(turn)
+            minLeaves = [ valFunc(state.generateSuccessor(turn, action), turn + 1, depth + 1) for action in actions if turn != "Stop"]
+            v = min(v, min(minLeaves))
+
+            return v
+
+
+
+        vals = [valFunc(gameState.generateSuccessor(0, action), 0, 0) for action in actions]
+        print "VALS!"
+        print vals
+        return max(vals)
+
+        # valFunc(gameState, 0)
+        # maxValue(gameState)
+        # minValue(gameState)
+
+        # return "West"
+        # actions = gameState.getLegalActions(agentInd)
+        # return [(gameState.generateSuccessor(0, action), action) for action in actions]
+        
+
+        # def valFunc(gState, action, agentTurn): 
+
+        #     if agentTurn == agentsTotal:
+        #         agentTurn = 0
+        #     if gState.isWin() or gState.isLose():
+        #         return gState.getScore()
+        #     elif (agentTurn == 0):
+        #         v = gState.generateSuccessor(0, action)
+        #         for successtor in gState.generateSuccessor(0, action):
+        #             v = max(v, valFunc(successtor, action, agentTurn+1 % agentsTotal))
+        #     else:
+        #         v = 99999999999999
+        #         for successtor in gState.generateSuccessor(0, action):
+        #             v = min(v, valFunc(successtor, action, agentTurn+1 % agentsTotal))
+
+        #     #     for state in state.generateSuccessor():
+
+        #     # else:
+        #         # return ghost turn
+        # # scores = [self.evaluationFunction(gameState, action) for action in legalMoves]
+        # scores = [valFunc(gameState.generateSuccessor(0, action), action, 0) for action in legalMoves]
+
+        # return max(scores)
 
 class AlphaBetaAgent(MultiAgentSearchAgent):
     """
