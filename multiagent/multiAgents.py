@@ -179,7 +179,7 @@ class MinimaxAgent(MultiAgentSearchAgent):
             else:
                 return minValue(state, turn, depth)
         # vals = [valFunc(gameState.generateSuccessor(0, action), 0) for action in actions]
-# 
+        
         def maxValue(state, turn, depth):
             v = float("-inf")
             if depth == self.depth:
@@ -204,7 +204,6 @@ class MinimaxAgent(MultiAgentSearchAgent):
 
         vals = [valFunc(gameState.generateSuccessor(0, action), 0, 0) for action in actions]
         print "VALS!"
-        print vals
         return max(vals)
 
         # valFunc(gameState, 0)
