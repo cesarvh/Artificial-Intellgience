@@ -20,8 +20,8 @@
 # value iteration.
 
 def question2():
-    answerDiscount = 0.9
-    answerNoise = 0.2
+    answerDiscount = .9 
+    answerNoise = 0.0 #If there is no noise, then the agent should be comf with moving str8
     return answerDiscount, answerNoise
 
 def question3a():
