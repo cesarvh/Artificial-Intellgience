@@ -146,7 +146,29 @@ class AsynchronousValueIterationAgent(ValueIterationAgent):
         ValueIterationAgent.__init__(self, mdp, discount, iterations)
 
     def runValueIteration(self):
-        "*** YOUR CODE HERE ***"
+        # "*** YOUR CODE HERE ***"
+        states = self.mdp.getStates()
+        iterationCounter = 0 
+        i = 0
+        while iterationCounter != self.iterations:
+            if i == len(states):
+                i = 0
+            state = states[i]
+            if self.mdp.isTerminal(state) == False:
+                for action in self.mdp.getPossibleActions(state):
+                    actionValues = []
+                    actionVal = 0
+                    for transition, probability in self.mdp.getTransitionStatesAndProbs(state, action):
+                        reward = self.mdp.getReward(state, action, transition)
+                        actionVal += probability * (reward + self.discount * self.values[transition])
+
+                    actionValues.append(actionVal)
+                # self.values[state] = max(actionValues or self.values[state])
+                if self.values[state] < max(actionValues):
+                    self.values[state] = max(actionValues)
+
+            iterationCounter += 1
+            i += 1
 
 class PrioritizedSweepingValueIterationAgent(AsynchronousValueIterationAgent):
     """
@@ -167,4 +189,26 @@ class PrioritizedSweepingValueIterationAgent(AsynchronousValueIterationAgent):
 
     def runValueIteration(self):
         "*** YOUR CODE HERE ***"
+        pq = PriorityQueue()
+        states = self.mdp.getStates()
+        for state in states:
+            if self.mdp.isTerminal(state) == False:
+                curr = self.values[state]
+                for action in self.mdp.getPossibleActions(state):
+                    actionValues = []
+                    actionVal = 0
+                    for transition, probability in self.mdp.getTransitionStatesAndProbs(state, action):
+                        reward = self.mdp.getReward(state, action, transition)
+                        actionVal += probability * (reward + self.discount * self.values[transition])
+                    actionValues.append(actionVal)
+                diff = max(actionValues)
+                pq.push(state, -1 * diff)
 
+        iterationCounter = 0
+        while iterationCounter != self.iterations:
+            if pq.isEmpty():
+                return
+            state_s = pq.pop()
+            if self.mdp.isTerminal(state) == False:
+            	#update value in self.values[state]
+            	x
