@@ -41,6 +41,12 @@ class QLearningAgent(ReinforcementAgent):
     def __init__(self, **args):
         "You can initialize Q-values here..."
         ReinforcementAgent.__init__(self, **args)
+        self.alpha = args['alpha']
+        self.actionFn = args['actionFn']
+        self.gamma = args['gamma']
+        self.epsilon = args['epsilon']
+        self.counter = util.Counter()
+
 
         "*** YOUR CODE HERE ***"
 
@@ -51,7 +57,8 @@ class QLearningAgent(ReinforcementAgent):
           or the Q node value otherwise
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        return self.counter[(state, action)]
+
 
 
     def computeValueFromQValues(self, state):
@@ -62,7 +69,16 @@ class QLearningAgent(ReinforcementAgent):
           terminal state, you should return a value of 0.0.
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        # util.raiseNotDefined()
+        # return 0
+        actions = self.getLegalActions(state)
+        actionArr = []
+        if len(actions) == 0:
+            return 0.0
+        else:
+            for action in actions:
+                actionArr.append(self.getQValue(state, action))
+        return max(actionArr)
 
     def computeActionFromQValues(self, state):
         """
@@ -70,8 +86,35 @@ class QLearningAgent(ReinforcementAgent):
           are no legal actions, which is the case at the terminal state,
           you should return None.
         """
+
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        actions = self.getLegalActions(state)
+        rand = random.choice
+
+        if (len(actions) == 0): return None
+        args = util.Counter()
+        for action in actions:
+            args[action] = self.counter[(state, action)]     
+
+        setCount = len(set(args.values()))
+        lstCount = len(args.values())
+
+        if setCount != lstCount:
+            diff = lstCount - setCount
+            for i in range (diff):
+                args.pop(min(args, key=args.get))
+            return random.choice(args.keys())
+        return args.argMax()
+
+        
+        # return 'East'
+        # you should break ties randomly using random.choice()
+        # In a particular state, actions that your agent hasn't seen before still 
+        # have a Q-value, specifically a Q-value of zero, and if all of the actions
+        # that your agent has seen before have a negative Q-value, an unseen action 
+        # may be optimal.
+
+        # util.raiseNotDefined()
 
     def getAction(self, state):
         """
@@ -86,11 +129,18 @@ class QLearningAgent(ReinforcementAgent):
         """
         # Pick Action
         legalActions = self.getLegalActions(state)
-        action = None
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        finalAction = None
+        # for action in legalActions:
+        # print "1"
+        # if util.flipCoin(self.epsilon):
+        # return random.choice()
+        return "East"
+        # else:
 
-        return action
+
+        #         for action in self.mdp.getPossibleActions(state):
+        #     counter[action] += self.computeQValueFromValues(state, action)
+        # return counter.argMax()
 
     def update(self, state, action, nextState, reward):
         """
@@ -102,7 +152,10 @@ class QLearningAgent(ReinforcementAgent):
           it will be called on your behalf
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        alpha = self.alpha
+        discount = self.gamma
+        qsa = self.getQValue(state, action)
+        self.counter[(state, action)] = ((1 - alpha) * qsa) + (alpha * (reward + discount * self.getValue(nextState)))
 
     def getPolicy(self, state):
         return self.computeActionFromQValues(state)
