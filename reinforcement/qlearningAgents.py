@@ -40,6 +40,7 @@ class QLearningAgent(ReinforcementAgent):
     """
     def __init__(self, **args):
         "You can initialize Q-values here..."
+        print args
         ReinforcementAgent.__init__(self, **args)
         self.alpha = args['alpha']
         self.actionFn = args['actionFn']
@@ -129,12 +130,15 @@ class QLearningAgent(ReinforcementAgent):
         """
         # Pick Action
         legalActions = self.getLegalActions(state)
-        finalAction = None
+        finalAction = self.computeActionFromQValues(state)
+        if (util.flipCoin(self.epsilon)):
+            return random.choice(legalActions)
+        return finalAction
         # for action in legalActions:
         # print "1"
         # if util.flipCoin(self.epsilon):
         # return random.choice()
-        return "East"
+        # return "East"
         # else:
 
 
