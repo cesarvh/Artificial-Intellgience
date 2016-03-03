@@ -40,12 +40,12 @@ class QLearningAgent(ReinforcementAgent):
     """
     def __init__(self, **args):
         "You can initialize Q-values here..."
-        print args
+        # print args
         ReinforcementAgent.__init__(self, **args)
-        self.alpha = args['alpha']
-        self.actionFn = args['actionFn']
-        self.gamma = args['gamma']
-        self.epsilon = args['epsilon']
+        # self.alpha = args['alpha']
+        # self.actionFn = args['actionFn']
+        # self.gamma = args['gamma']
+        # self.epsilon = args['epsilon']
         self.counter = util.Counter()
 
 
@@ -157,7 +157,7 @@ class QLearningAgent(ReinforcementAgent):
         """
         "*** YOUR CODE HERE ***"
         alpha = self.alpha
-        discount = self.gamma
+        discount = self.discount
         qsa = self.getQValue(state, action)
         self.counter[(state, action)] = ((1 - alpha) * qsa) + (alpha * (reward + discount * self.getValue(nextState)))
 
