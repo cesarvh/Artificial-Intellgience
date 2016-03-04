@@ -91,20 +91,46 @@ class QLearningAgent(ReinforcementAgent):
 
         if (len(actions) == 0): return None
         args = util.Counter()
+        # action, qValue
+        unseen = []
+        seen = util.Counter()
         for action in actions:
+            qVal = self.getQValue(state, action)
+            if qVal == 0.0:
+              unseen.append(action)
+            else:
+              seen[action] = qVal
+            args[action] = qVal
 
-            args[action] = self.getQValue(state, action)  
+        all_negative_seens = all([i < 0 for i in seen.values()])
+        if all_negative_seens and unseen:
+            return random.choice(unseen)
 
 
-        setCount = len(set(args.values()))
-        lstCount = len(args.values())
+        max_val = -float("inf")
+        max_actions = []
+        for action in args:
+            x = args[action]
+            if x > max_val:
+              max_val = x
+              max_actions = [action]
+            elif x == max_val:
+              max_actions.append(action)
 
-        if setCount != lstCount:
-            diff = lstCount - setCount
-            for i in range (diff):
-                args.pop(min(args, key=args.get))
-            return random.choice(args.keys())
-        return args.argMax()
+        return random.choice(max_actions)
+
+
+
+        # setCount = len(set(args.values()))
+        # lstCount = len(args.values())
+
+        # if setCount != lstCount:
+        #     diff = lstCount - setCount
+        #     for i in range (diff):
+        #         args.pop(min(args, key=args.get))
+        #     return random.choice(args.keys())
+        # return args.argMax()
+
 
         
         # return 'East'
