@@ -15,25 +15,22 @@
 from game import *
 from learningAgents import ReinforcementAgent
 from featureExtractors import *
+from featureExtractors import *
 
 import random,util,math
 
 class QLearningAgent(ReinforcementAgent):
-    """
-      Q-Learning Agent
-
+    """      Q-Learning Agent
       Functions you should fill in:
         - computeValueFromQValues
         - computeActionFromQValues
         - getQValue
         - getAction
         - update
-
       Instance variables you have access to
         - self.epsilon (exploration prob)
         - self.alpha (learning rate)
         - self.discount (discount rate)
-
       Functions you should use
         - self.getLegalActions(state)
           which returns legal actions for a state
@@ -95,7 +92,9 @@ class QLearningAgent(ReinforcementAgent):
         if (len(actions) == 0): return None
         args = util.Counter()
         for action in actions:
-            args[action] = self.counter[(state, action)]     
+
+            args[action] = self.getQValue(state, action)  
+
 
         setCount = len(set(args.values()))
         lstCount = len(args.values())
@@ -124,7 +123,6 @@ class QLearningAgent(ReinforcementAgent):
           take the best policy action otherwise.  Note that if there are
           no legal actions, which is the case at the terminal state, you
           should choose None as the action.
-
           HINT: You might want to use util.flipCoin(prob)
           HINT: To pick randomly from a list, use random.choice(list)
         """
@@ -151,7 +149,6 @@ class QLearningAgent(ReinforcementAgent):
           The parent class calls this to observe a
           state = action => nextState and reward transition.
           You should do your Q-Value update here
-
           NOTE: You should never call this function,
           it will be called on your behalf
         """
@@ -176,7 +173,6 @@ class PacmanQAgent(QLearningAgent):
         These default parameters can be changed from the pacman.py command line.
         For example, to change the exploration rate, try:
             python pacman.py -p PacmanQLearningAgent -a epsilon=0.1
-
         alpha    - learning rate
         epsilon  - exploration rate
         gamma    - discount factor
@@ -203,7 +199,6 @@ class PacmanQAgent(QLearningAgent):
 class ApproximateQAgent(PacmanQAgent):
     """
        ApproximateQLearningAgent
-
        You should only have to overwrite getQValue
        and update.  All other QLearningAgent functions
        should work as is.
@@ -222,14 +217,29 @@ class ApproximateQAgent(PacmanQAgent):
           where * is the dotProduct operator
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        features = self.featExtractor.getFeatures(state, action)
+        return self.getWeights() * features
+
 
     def update(self, state, action, nextState, reward):
         """
            Should update your weights based on transition
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        # next_q = self.getQValue(nextState, action)
+        next_q = self.computeValueFromQValues(nextState)
+        difference = (reward + self.discount * next_q) - self.getQValue(state, action)
+        # print(self.featExtractor.getFeatures(state, action))
+        x = self.alpha * difference
+        features = self.featExtractor.getFeatures(state, action)
+
+        for key in features:
+            updated = features[key] * x
+            self.weights[key] = self.weights[key] + updated
+            # print(key)
+
+        # self.weights = self.weights + features
+        
 
     def final(self, state):
         "Called at the end of each game."

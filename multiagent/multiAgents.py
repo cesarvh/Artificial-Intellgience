@@ -173,6 +173,56 @@ class MinimaxAgent(MultiAgentSearchAgent):
         return action
 
     def value(self, gameState, depth, agentIndex):
+<<<<<<< HEAD
+    	# TODO: assign agent #'s and update depth, what exactly are we returning -> action, make tuple
+    	if agentIndex == 0 or agentIndex == gameState.getNumAgents():
+    		agentIndex = 0
+    		depth += 1
+        # if gameState.isWin() or gameState.isLose():
+        #     return gameState.getScore()
+
+    	if self.depth == depth - 1 or gameState.isWin() or gameState.isLose():
+    		return (self.evaluationFunction(gameState), "")
+
+    	if agentIndex == 0:
+    		value_action = self.max_value(gameState, depth, agentIndex)
+
+    	else:
+    		value_action = self.min_value(gameState, depth, agentIndex)
+
+    	return value_action 
+
+    def max_value(self, gameState, depth, agentIndex):
+    	value_action = (-1 * float("inf"), "")
+    	# get successors
+    	actions = gameState.getLegalActions(agentIndex)
+    	for action in actions:
+    		successor = gameState.generateSuccessor(agentIndex, action)
+    		valuetuple_successor = self.value(successor, depth, agentIndex + 1)
+    		value_successor = valuetuple_successor[0]
+
+    		if value_successor > value_action[0]:
+    			value_action = (value_successor, action)
+    		# value_action = max(v, value(self, successor, depth, agentIndex))
+
+    	return value_action
+
+    def min_value(self, gameState, depth, agentIndex):
+    	value_action = (float("inf"), "")
+    	actions = gameState.getLegalActions(agentIndex)
+    	for action in actions:
+    		successor = gameState.generateSuccessor(agentIndex, action)
+    		valuetuple_successor = self.value(successor, depth, agentIndex + 1)
+    		value_successor = valuetuple_successor[0]
+
+    		if value_successor < value_action[0]:
+    			value_action = (value_successor, action)
+    		# value_action = max(v, value(self, successor, depth, agentIndex))
+
+    	return value_action
+
+    	
+=======
         # TODO: assign agent #'s and update depth, what exactly are we returning -> action, make tuple
         if agentIndex == 0 or agentIndex == gameState.getNumAgents():
             agentIndex = 0
@@ -221,6 +271,7 @@ class MinimaxAgent(MultiAgentSearchAgent):
         return value_action
 
         
+>>>>>>> master
 
 class AlphaBetaAgent(MultiAgentSearchAgent):
     """
@@ -242,6 +293,63 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
         return action
 
     def value(self, gameState, depth, agentIndex, alpha, beta):
+<<<<<<< HEAD
+    	# TODO: assign agent #'s and update depth, what exactly are we returning -> action, make tuple
+    	if agentIndex == 0 or agentIndex == gameState.getNumAgents():
+    		agentIndex = 0
+    		depth += 1
+        # if gameState.isWin() or gameState.isLose():
+        #     return gameState.getScore()
+
+    	if self.depth == depth - 1 or gameState.isWin() or gameState.isLose():
+    		return (self.evaluationFunction(gameState), "")
+
+    	if agentIndex == 0:
+    		value_action = self.max_value(gameState, depth, agentIndex, alpha, beta)
+
+    	else:
+    		value_action = self.min_value(gameState, depth, agentIndex, alpha, beta)
+
+    	return value_action 
+
+    def max_value(self, gameState, depth, agentIndex, alpha, beta):
+    	value_action = (-1 * float("inf"), "")
+    	# get successors
+    	actions = gameState.getLegalActions(agentIndex)
+    	for action in actions:
+    		successor = gameState.generateSuccessor(agentIndex, action)
+    		valuetuple_successor = self.value(successor, depth, agentIndex + 1, alpha, beta)
+    		value_successor = valuetuple_successor[0]
+
+    		if value_successor > value_action[0]:
+    			value_action = (value_successor, action)
+
+    		if value_action[0] > beta:
+    			return value_action
+
+    		alpha = max(alpha, value_successor)
+
+    	return value_action
+
+    def min_value(self, gameState, depth, agentIndex, alpha, beta):
+    	value_action = (float("inf"), "")
+    	# get successors
+    	actions = gameState.getLegalActions(agentIndex)
+    	for action in actions:
+    		successor = gameState.generateSuccessor(agentIndex, action)
+    		valuetuple_successor = self.value(successor, depth, agentIndex + 1, alpha, beta)
+    		value_successor = valuetuple_successor[0]
+
+    		if value_successor < value_action[0]:
+    			value_action = (value_successor, action)
+
+    		if value_action[0] < alpha:
+    			return value_action
+
+    		beta = min(beta, value_successor)
+
+    	return value_action
+=======
         # TODO: assign agent #'s and update depth, what exactly are we returning -> action, make tuple
         if agentIndex == 0 or agentIndex == gameState.getNumAgents():
             agentIndex = 0
@@ -297,6 +405,7 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
             beta = min(beta, value_successor)
 
         return value_action
+>>>>>>> master
 
 class ExpectimaxAgent(MultiAgentSearchAgent):
     """
@@ -320,6 +429,21 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
 
 
     def value(self, gameState, depth, agentIndex):
+<<<<<<< HEAD
+    	# TODO: assign agent #'s and update depth, what exactly are we returning -> action, make tuple
+    	if agentIndex == 0 or agentIndex == gameState.getNumAgents():
+    		agentIndex = 0
+    		depth += 1
+
+    	if self.depth == depth - 1 or gameState.isWin() or gameState.isLose():
+    		return (self.evaluationFunction(gameState), "")
+
+    	if agentIndex == 0:
+    		value_action = self.max_value(gameState, depth, agentIndex)
+
+    	else:
+    		value_action = self.exp_value(gameState, depth, agentIndex)
+=======
         # TODO: assign agent #'s and update depth, what exactly are we returning -> action, make tuple
         if agentIndex == 0 or agentIndex == gameState.getNumAgents():
             agentIndex = 0
@@ -333,6 +457,7 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
 
         else:
             value_action = self.exp_value(gameState, depth, agentIndex)
+>>>>>>> master
 
         return value_action 
 
@@ -367,7 +492,10 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
 
         return (value, "")
 
+<<<<<<< HEAD
+=======
         
+>>>>>>> master
 def calculateDistances(pacman, items):
     distances = []
     for item in items:
@@ -379,10 +507,19 @@ def betterEvaluationFunction(currentGameState):
     """
       Your extreme ghost-hunting, pellet-nabbing, food-gobbling, unstoppable
       evaluation function (question 5).
-
       DESCRIPTION: <write something here so we know what you did>
     """
     "*** YOUR CODE HERE ***"
+<<<<<<< HEAD
+    radiusSum = 0
+    proximityBonus = 0
+    runawayBonus = 0
+    total = 0
+
+    if (currentGameState.isWin()):
+        return float("inf")
+
+=======
     # Initialize things that MAY later change to 0.
     radiusSum = 0 
     runawayBonus = 0
@@ -395,11 +532,27 @@ def betterEvaluationFunction(currentGameState):
 
     # Now we want to get the current positions of the Pacman, Ghosts, Food and Pellets
     # In order to calculate stuff. Note FoodPositions is a list of tuples of integers
+>>>>>>> master
     pacmanPos = currentGameState.getPacmanPosition()
     ghostPositions = currentGameState.getGhostPositions()
     foodPositions = currentGameState.getFood().asList()
     pelletPositions = currentGameState.getCapsules()
     newGhostStates = currentGameState.getGhostStates()
+<<<<<<< HEAD
+    currentScore = currentGameState.getScore()
+    wallPositions = currentGameState.getWalls()
+    wallList = wallPositions.asList()
+    total += currentScore
+
+    gridFirstHalf = (wallPositions.width / 2)
+    gridSecondHalf = (wallPositions.width / 2) + 1
+
+
+    newScaredTimes = [ghostState.scaredTimer for ghostState in newGhostStates]
+
+    # print newScaredTimes
+
+=======
 
     # This gets the amount of time left that the ghost will be scared/eatable
     newScaredTimes = [ghostState.scaredTimer for ghostState in newGhostStates]
@@ -407,10 +560,42 @@ def betterEvaluationFunction(currentGameState):
 
     # Now we will compute the distance to the foods, the ghosts, and the power pellets.
     # These are LISTS of distances from pacman --> item
+>>>>>>> master
     pelletDistances = calculateDistances(pacmanPos, pelletPositions)
     ghostDistances = calculateDistances(pacmanPos, ghostPositions)
     foodDistances = calculateDistances(pacmanPos, foodPositions)
     
+<<<<<<< HEAD
+    closestPellet = 0
+    scaredtimes = sum(newScaredTimes)
+
+    if (len(pelletDistances) != 0):
+        closestPellet = min(pelletDistances)
+        closestPellet = 1.0/closestPellet
+        # if (scaredtimes == 0): closestPellet = 0
+
+    closestFood, closestGhost = min(foodDistances), min(ghostDistances)
+
+
+    # ## Make scared ghost more favorable to go to
+    if (sum(newScaredTimes) > 5):
+        runawayBonus = sum(newScaredTimes) + 10
+        closestGhost = 1
+
+    if (foodDistances != 0): 
+        closestFood = 1.0/closestFood
+        total += closestFood * closestGhost
+
+    if (closestGhost > 3):
+        total += 50
+    if (closestGhost < 4 and closestGhost > 3 and closestPellet < 3 and scaredtimes == 0):
+        total += 10
+
+    # return total
+
+    return currentGameState.getScore() + ((closestPellet + closestFood) * closestGhost) + radiusSum + scaredtimes + (proximityBonus + runawayBonus)
+
+=======
     # If there are still pellets left on the board
     if (len(pelletDistances) != 0):
         closestPellet = min(pelletDistances) # Then we get the distance to the closest pellet
@@ -447,6 +632,7 @@ def betterEvaluationFunction(currentGameState):
     # Added scared times, because if the ghost is scared, we shouldn't worry about it.
     # Added Runaway bonus, see lines 431-433
     return currentGameState.getScore() + closestPellet + (closestFood * closestGhost) + radiusSum + scaredtimes  + runawayBonus
+>>>>>>> master
 
 # Abbreviation
 better = betterEvaluationFunction
