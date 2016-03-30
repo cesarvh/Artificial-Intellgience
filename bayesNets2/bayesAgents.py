@@ -96,10 +96,43 @@ def constructBayesNet(gameState):
     variableDomainsDict = {}
 
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    # util.raiseNotDefined()
+
+    # //**** ALL WORK BELOW IS MINE -CESAR
+    # Get the observation variables
+    for housePos in gameState.getPossibleHouses():
+        for obsPos in gameState.getHouseWalls(housePos):
+            obsVar = OBS_VAR_TEMPLATE % obsPos
+            obsVars.append(obsVar)
+
+    # Append (Y, VAR) to the edges
+    edges.append( (X_POS_VAR, FOOD_HOUSE_VAR)  )
+    edges.append( (X_POS_VAR, GHOST_HOUSE_VAR) )
+    edges.append( (Y_POS_VAR, FOOD_HOUSE_VAR)  )
+    edges.append( (Y_POS_VAR, GHOST_HOUSE_VAR) )
+
+    for i in range(0, len(obsVars)): #Inserts everything into the edges dictionary
+        edges.append((FOOD_HOUSE_VAR, obsVars[i]))
+        edges.append((GHOST_HOUSE_VAR, obsVars[i]))
+
+    variableDomainsDict[X_POS_VAR] = X_POS_VALS # Populates the X variable
+    variableDomainsDict[Y_POS_VAR] = Y_POS_VALS # Populates the Y variable
+    variableDomainsDict[GHOST_HOUSE_VAR] = HOUSE_VALS # Populates the Ghost House Var
+    variableDomainsDict[FOOD_HOUSE_VAR] = HOUSE_VALS # Populates the Food House var
+
+    for i in range(0, len(obsVars)): # Populates the observations variables 
+        variableDomainsDict[obsVars[i]] = OBS_VALS
+
+
+
+    # //****** ALL WORK ABOVE IS MINE -CESAR
+
+
+
 
     variables = [X_POS_VAR, Y_POS_VAR] + HOUSE_VARS + obsVars
     net = bn.constructEmptyBayesNet(variables, edges, variableDomainsDict)
+    print net
     return net, obsVars
 
 def fillCPTs(bayesNet, gameState):
