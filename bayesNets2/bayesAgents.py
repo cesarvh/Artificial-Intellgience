@@ -132,7 +132,7 @@ def constructBayesNet(gameState):
 
     variables = [X_POS_VAR, Y_POS_VAR] + HOUSE_VARS + obsVars
     net = bn.constructEmptyBayesNet(variables, edges, variableDomainsDict)
-    print net
+    # print net
     return net, obsVars
 
 def fillCPTs(bayesNet, gameState):
@@ -160,11 +160,14 @@ def fillYCPT(bayesNet, gameState):
     # from layout import PROB_*
     yFactor = bn.Factor([Y_POS_VAR], [], bayesNet.variableDomainsDict())
     "*** YOUR CODE HERE ***"
+
     yFactor.setProbability({Y_POS_VAR: BOTH_TOP_VAL}, PROB_BOTH_TOP)
     yFactor.setProbability({Y_POS_VAR: BOTH_BOTTOM_VAL}, PROB_BOTH_BOTTOM)
     yFactor.setProbability({Y_POS_VAR: LEFT_TOP_VAL}, PROB_ONLY_LEFT_TOP)
     yFactor.setProbability({Y_POS_VAR: LEFT_BOTTOM_VAL}, PROB_ONLY_LEFT_BOTTOM)
+
     bayesNet.setCPT(Y_POS_VAR, yFactor)
+
 
 def fillHouseCPT(bayesNet, gameState):
     foodHouseFactor = bn.Factor([FOOD_HOUSE_VAR], [X_POS_VAR, Y_POS_VAR], bayesNet.variableDomainsDict())
@@ -224,11 +227,33 @@ def fillObsCPT(bayesNet, gameState):
     autograder, use the *food house distribution* over colors when both the food
     house and ghost house are assigned to the same cell.
     """
-
     bottomLeftPos, topLeftPos, bottomRightPos, topRightPos = gameState.getPossibleHouses()
 
-    "*** YOUR CODE HERE ***"
-    
+    # obsFactor = bn.Factor(obsVars, [GHOST_HOUSE_VAR, FOOD_HOUSE_VAR],bayesNet.variableDomainsDict())
+
+
+    # foodHouseFactor = bn.Factor([FOOD_HOUSE_VAR], [X_POS_VAR, Y_POS_VAR], bayesNet.variableDomainsDict())
+    # FOOD_HOUSE_VAR
+    # GHOST_HOUSE_VAR
+    # gameState.getHouseWalls()
+    # valsToPos = {}
+    # print bayesNet.variableDomainsDict()
+    for housePos in gameState.getPossibleHouses(): # house == house center
+        for obsPos in gameState.getHouseWalls(housePos):
+            obsVar = OBS_VAR_TEMPLATE % obsPos
+            obsFactor = bn.Factor([obsVar], [GHOST_HOUSE_VAR, FOOD_HOUSE_VAR, X_POS_VAR, Y_POS_VAR], bayesNet.variableDomainsDict())
+            print obsFactor
+
+
+
+# If the adjacent house center is occupied by neither the ghost 
+    #house or the food house, an observation is none with certainty (probability 1).
+# If the adjacent house center is occupied by the ghost house,
+    # it is red with probability PROB_GHOST_RED and blue otherwise.
+# If the adjacent house center is occupied by the food house, 
+    #it is red with probability PROB_FOOD_RED and blue otherwise.
+
+    # util.raiseNotefined()
 
 def getMostLikelyFoodHousePosition(evidence, bayesNet, eliminationOrder):
     """
