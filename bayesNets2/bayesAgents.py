@@ -238,13 +238,52 @@ def fillObsCPT(bayesNet, gameState):
     # gameState.getHouseWalls()
     # valsToPos = {}
     # print bayesNet.variableDomainsDict()
+    centerStr = ""
+    prob = 10000
     for housePos in gameState.getPossibleHouses(): # house == house center
         for obsPos in gameState.getHouseWalls(housePos):
             obsVar = OBS_VAR_TEMPLATE % obsPos
-            obsFactor = bn.Factor([obsVar], [GHOST_HOUSE_VAR, FOOD_HOUSE_VAR, X_POS_VAR, Y_POS_VAR], bayesNet.variableDomainsDict())
-            print obsFactor
+
+            obsFactor = bn.Factor([obsVar], [GHOST_HOUSE_VAR, FOOD_HOUSE_VAR], bayesNet.variableDomainsDict())
+            # print obsFactor
+            for assignment in obsFactor.getAllPossibleAssignmentDicts():
+                colorType = assignment[obsVar]
+                if bottomRightPos == housePos:
+                    centerStr = "bottomRight"
+                if topLeftPos == housePos:
+                    centerStr = "topLeft"
+                if bottomLeftPos == housePos:
+                    centerStr = "bottomLeft"
+                if topRightPos == housePos:
+                    centerStr = "topRight"
+
+                if colorType != BLUE_OBS_VAL and colorType != RED_OBS_VAL:
+                    if centerStr != assignment[FOOD_HOUSE_VAR] and centerStr != assignment[GHOST_HOUSE_VAR]: 
+                        prob = 1
+                    else: 
+                        prob = 0
+
+                elif colorType == RED_OBS_VAL:
+                    if centerStr == assignment[GHOST_HOUSE_VAR]:
+                        prob = PROB_GHOST_RED
+                    if centerStr == assignment[FOOD_HOUSE_VAR]:
+                        prob = PROB_FOOD_RED
+
+                elif colorType == BLUE_OBS_VAL:
+                    if centerStr == assignment[GHOST_HOUSE_VAR]:
+                        prob = 1 - PROB_GHOST_RED
+                    if centerStr == assignment[FOOD_HOUSE_VAR]:
+                        prob = 1 - PROB_FOOD_RED
+                else:
+                    prob = 0
+                obsFactor.setProbability(assignment, prob)
+
+            
+            bayesNet.setCPT(obsVar, obsFactor)
+    #         valsToPos[TOP_LEFT_VAL] = housePos
 
 
+    # bayesNet.setCPT(GHOST_HOUSE_VAR, ghostHouseFactor)
 
 # If the adjacent house center is occupied by neither the ghost 
     #house or the food house, an observation is none with certainty (probability 1).
