@@ -126,18 +126,7 @@ def joinFactors(factors):
 
     return newFactor
 
-        # for assign
 
-        # for assignment in factor.getAllPossibleAssignmentDicts():
-            
-        #     print factor.unconditionedVariables()
-
-        # print "pass"
-
-
-    "*** YOUR CODE HERE ***"
-# 
-    # print "=====^"
 
 
 def eliminateWithCallTracking(callTrackingList=None):
@@ -186,7 +175,23 @@ def eliminateWithCallTracking(callTrackingList=None):
                     "unconditionedVariables: " + str(factor.unconditionedVariables()))
 
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        # util.raiseNotDefined()
+        newConds = set()
+        newUnconds = set()
+        newDic = {}
+
+        for unconditionedVar in factor.unconditionedVariables():
+            if unconditionedVar != eliminationVariable:
+                newUnconds.add(unconditionedVar)
+                newDic[unconditionedVar] = factor.variableDomainsDict()[unconditionedVar]
+
+        for conditionedVar in factor.conditionedVariables():
+            if conditionedVar != eliminationVariable:
+                newConds.add(conditionedVar)
+                newDic[conditionedVar] = factor.variableDomainsDict()[conditionedVar]
+
+        newFactor = Factor(newUnconds, newConds, newDic)
+        print newFactor
 
     return eliminate
 
