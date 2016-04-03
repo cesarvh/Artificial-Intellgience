@@ -245,14 +245,12 @@ def fillObsCPT(bayesNet, gameState):
     # valsToPos = {}
     # print bayesNet.variableDomainsDict()
     centerStr = ""
-    prob = 10000
     for housePos in gameState.getPossibleHouses(): # house == house center
         for obsPos in gameState.getHouseWalls(housePos):
             obsVar = OBS_VAR_TEMPLATE % obsPos
             obsFactor = bn.Factor([obsVar], [GHOST_HOUSE_VAR, FOOD_HOUSE_VAR], bayesNet.variableDomainsDict())
             # print obsFactor
             for assignment in obsFactor.getAllPossibleAssignmentDicts():
-                colorType = assignment[obsVar]
                 if bottomRightPos == housePos:
                     centerStr = "bottomRight"
                 if topLeftPos == housePos:
@@ -261,26 +259,23 @@ def fillObsCPT(bayesNet, gameState):
                     centerStr = "bottomLeft"
                 if topRightPos == housePos:
                     centerStr = "topRight"
+                prob = 0
 
-                if colorType != BLUE_OBS_VAL and colorType != RED_OBS_VAL:
-                    if centerStr != assignment[FOOD_HOUSE_VAR] and centerStr != assignment[GHOST_HOUSE_VAR]: 
-                        prob = 1
-                    else: 
-                        prob = 0
-
-                elif colorType == RED_OBS_VAL:
-                    if centerStr == assignment[GHOST_HOUSE_VAR]:
-                        prob = PROB_GHOST_RED
-                    if centerStr == assignment[FOOD_HOUSE_VAR]:
+                if assignment[FOOD_HOUSE_VAR] == centerStr:
+                    if assignment[obsVar] == RED_OBS_VAL:
                         prob = PROB_FOOD_RED
-
-                elif colorType == BLUE_OBS_VAL:
-                    if centerStr == assignment[GHOST_HOUSE_VAR]:
-                        prob = 1 - PROB_GHOST_RED
-                    if centerStr == assignment[FOOD_HOUSE_VAR]:
+                    elif assignment[obsVar] == BLUE_OBS_VAL:
                         prob = 1 - PROB_FOOD_RED
-                else:
-                    prob = 0
+
+                elif assignment[GHOST_HOUSE_VAR] == centerStr:
+                    if assignment[obsVar] == RED_OBS_VAL:
+                        prob = PROB_GHOST_RED
+                    elif assignment[obsVar] == BLUE_OBS_VAL:
+                        prob = 1 - PROB_GHOST_RED
+                
+                elif assignment[obsVar] == NO_OBS_VAL:
+                    prob = 1
+
                 obsFactor.setProbability(assignment, prob)
 
             
