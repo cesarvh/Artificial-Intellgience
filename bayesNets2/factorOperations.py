@@ -128,6 +128,37 @@ def joinFactors(factors):
 
 
 
+    unknown = set()
+    given = set()
+    varsDomainDict = {}
+
+
+    for factor in factors:
+        for unconditionedVar in factor.unconditionedVariables():
+            if unconditionedVar in given:
+                given.remove(unconditionedVar)
+            unknown.add(unconditionedVar)
+            varsDomainDict[unconditionedVar] = factor.variableDomainsDict()[unconditionedVar]
+
+    for factor in factors:
+        for conditionedVar in factor.conditionedVariables():
+            if conditionedVar not in unknown:
+                given.add(conditionedVar)
+                varsDomainDict[conditionedVar] = factor.variableDomainsDict()[conditionedVar]
+
+    newFactor = Factor(unknown, given, varsDomainDict)
+
+    allAssignments = newFactor.getAllPossibleAssignmentDicts()
+
+    for assignment in allAssignments:
+        totalProb = 1.0
+        for factor in factors:
+            prob = factor.getProbability(assignment)
+            totalProb *= prob
+        newFactor.setProbability(assignment, totalProb)
+
+
+    return newFactor
 
 def eliminateWithCallTracking(callTrackingList=None):
 
@@ -175,37 +206,38 @@ def eliminateWithCallTracking(callTrackingList=None):
                     "unconditionedVariables: " + str(factor.unconditionedVariables()))
 
         "*** YOUR CODE HERE ***"
-        # util.raiseNotDefined()
-        newConds = set()
-        newUnconds = set()
-        newDic = factor.variableDomainsDict()
-        newDomain = {}
 
-        for unconditionedVar in factor.unconditionedVariables():
-            if unconditionedVar != eliminationVariable:
-                newUnconds.add(unconditionedVar)
+        # sum over eliminationVariable in factor
+        unconditionedVars = factor.unconditionedVariables()
+        unconditionedVars.remove(eliminationVariable)
+        conditionedVars = factor.conditionedVariables()
+        varsDomainDict = factor.variableDomainsDict()
 
-        for conditionedVar in factor.conditionedVariables():
-            if conditionedVar != eliminationVariable:
-                newConds.add(conditionedVar)
+        newFactor = Factor(unconditionedVars, conditionedVars, varsDomainDict)
 
-        newFactor = Factor(newUnconds, newConds, newDic)
+        allAssignments = factor.getAllPossibleAssignmentDicts()
 
-        for assignment in factor.getAllPossibleAssignmentDicts():
+        otherVarDomain = {}
+
+
+        for assignment in allAssignments:
             prob = factor.getProbability(assignment)
             del assignment[eliminationVariable] # delete eliminationVariable from assignment
             key = tuple(sorted(assignment.items()))
-            
-            if key not in newDomain:
-                newDomain[key] = 0
-            newDomain[key] += prob
+
+            if key not in otherVarDomain:
+                otherVarDomain[key] = 0
+            otherVarDomain[key] += prob
+            # del assignment[eliminationVariable]
 
 
-        for otherVar in newDomain.keys():
+        for otherVar in otherVarDomain.keys():
             assignment = dict(otherVar)
-            newFactor.setProbability(assignment, newDomain[otherVar])
+            newFactor.setProbability(assignment, otherVarDomain[otherVar])
+
 
         return newFactor
+
 
     return eliminate
 
@@ -261,34 +293,32 @@ def normalize(factor):
 
     "*** YOUR CODE HERE ***"
 
-    conditioned = factor.conditionedVariables()
-    unconditioned = factor.unconditionedVariables()
-    dictionary = factor.variableDomainsDict()
+    unconditionedVars = factor.unconditionedVariables()
+    conditionedVars = factor.conditionedVariables()
+    varsDomainDict = factor.variableDomainsDict()
 
-    z = 0
+    for variable in list(unconditionedVars):
+        domain = varsDomainDict[variable]
+        if len(domain) == 1:
+            conditionedVars.add(variable)
+            unconditionedVars.remove(variable)
 
-    newDic = {}
+    newFactor = Factor(unconditionedVars, conditionedVars, varsDomainDict)
+    allAssignments = factor.getAllPossibleAssignmentDicts()
 
-    for assignment in factor.getAllPossibleAssignmentDicts():
-        z += factor.getProbability(assignment)
+    sumProbs = 0
+    for assignment in allAssignments:
+        sumProbs += factor.getProbability(assignment)
 
-    for assignment in factor.getAllPossibleAssignmentDicts():
-        newZ = factor.getProbability(assignment) / z
+    if sumProbs == 0:
+        return None
 
-        key = tuple(sorted(assignment.items()))
-        
-        if key not in newDic.items():            
-            newDic[key] = 0
-        newDic[key] = newZ
+    for assignment in allAssignments:
+        origProb = factor.getProbability(assignment)
+        newFactor.setProbability(assignment, origProb/sumProbs)
 
-    newFactor = Factor(unconditioned, conditioned, newDic)
 
     return newFactor
-
-
-
-
-
 
 
 
