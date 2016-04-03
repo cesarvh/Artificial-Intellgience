@@ -306,7 +306,6 @@ def getMostLikelyFoodHousePosition(evidence, bayesNet, eliminationOrder):
 
     elimTable = inference.inferenceByVariableElimination(bayesNet, FOOD_HOUSE_VAR, evidence, eliminationOrder)
     pList = {}
-
     iterNumber = 1
 
     for assignment in elimTable.getAllPossibleAssignmentDicts():
@@ -317,13 +316,11 @@ def getMostLikelyFoodHousePosition(evidence, bayesNet, eliminationOrder):
         oldProb = elimTable.getProbability(pList[FOOD_HOUSE_VAR])
 
         if newProb > oldProb:
-            # pList = {}
             pList[FOOD_HOUSE_VAR] = assignment
         iterNumber += 1
 
     return pList[FOOD_HOUSE_VAR]
 
-    # def inferenceByVariableElimination(bayesNet, queryVariables, evidenceDict, eliminationOrder):
 
 
 
@@ -422,11 +419,23 @@ class VPIAgent(BayesAgent):
         of the houses---this is calculated elsewhere in the code.
         """
 
-        leftExpectedValue = 0
-        rightExpectedValue = 0
+        leftExpectedValue = 0.0
+        rightExpectedValue = 0.0
+         # GHOST_COLLISION_REWARD, WON_GAME_REWARD
+        totalsTable = inference.inferenceByVariableElimination(self.bayesNet, FOOD_HOUSE_VAR, evidence, eliminationOrder)
 
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+
+        total = 0
+
+        for assignment in totalsTable.getAllPossibleAssignmentDicts():
+            prob = totalsTable.getProbability(assignment)
+
+            rightExpectedValue += (prob * GHOST_COLLISION_REWARD)
+            rightExpectedValue *= -1
+
+            leftExpectedValue += (prob * WON_GAME_REWARD)
+            leftExpectedValue *= -1
+
 
         return leftExpectedValue, rightExpectedValue
 
