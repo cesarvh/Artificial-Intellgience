@@ -178,20 +178,34 @@ def eliminateWithCallTracking(callTrackingList=None):
         # util.raiseNotDefined()
         newConds = set()
         newUnconds = set()
-        newDic = {}
+        newDic = factor.variableDomainsDict()
+        newDomain = {}
 
         for unconditionedVar in factor.unconditionedVariables():
             if unconditionedVar != eliminationVariable:
                 newUnconds.add(unconditionedVar)
-                newDic[unconditionedVar] = factor.variableDomainsDict()[unconditionedVar]
 
         for conditionedVar in factor.conditionedVariables():
             if conditionedVar != eliminationVariable:
                 newConds.add(conditionedVar)
-                newDic[conditionedVar] = factor.variableDomainsDict()[conditionedVar]
 
         newFactor = Factor(newUnconds, newConds, newDic)
-        print newFactor
+
+        for assignment in factor.getAllPossibleAssignmentDicts():
+            prob = factor.getProbability(assignment)
+            del assignment[eliminationVariable] # delete eliminationVariable from assignment
+            key = tuple(sorted(assignment.items()))
+            
+            if key not in newDomain:
+                newDomain[key] = 0
+            newDomain[key] += prob
+
+
+        for otherVar in newDomain.keys():
+            assignment = dict(otherVar)
+            newFactor.setProbability(assignment, newDomain[otherVar])
+
+        return newFactor
 
     return eliminate
 
