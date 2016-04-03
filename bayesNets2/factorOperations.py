@@ -260,5 +260,35 @@ def normalize(factor):
                             str(factor))
 
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+
+    conditioned = factor.conditionedVariables()
+    unconditioned = factor.unconditionedVariables()
+    dictionary = factor.variableDomainsDict()
+
+    z = 0
+
+    newDic = {}
+
+    for assignment in factor.getAllPossibleAssignmentDicts():
+        z += factor.getProbability(assignment)
+
+    for assignment in factor.getAllPossibleAssignmentDicts():
+        newZ = factor.getProbability(assignment) / z
+
+        key = tuple(sorted(assignment.items()))
+        
+        if key not in newDic.items():            
+            newDic[key] = 0
+        newDic[key] = newZ
+
+    newFactor = Factor(unconditioned, conditioned, newDic)
+
+    return newFactor
+
+
+
+
+
+
+
 
