@@ -157,7 +157,7 @@ def fillYCPT(bayesNet, gameState):
     You can use the PROB_* constants imported from layout rather than writing
     probabilities down by hand.
     """
-
+    # from layout import PROB_*
     yFactor = bn.Factor([Y_POS_VAR], [], bayesNet.variableDomainsDict())
     "*** YOUR CODE HERE ***"
 
@@ -166,12 +166,6 @@ def fillYCPT(bayesNet, gameState):
     yFactor.setProbability({Y_POS_VAR: LEFT_TOP_VAL}, PROB_ONLY_LEFT_TOP)
     yFactor.setProbability({Y_POS_VAR: LEFT_BOTTOM_VAL}, PROB_ONLY_LEFT_BOTTOM)
 
-
-    # from layout import PROB_BOTH_TOP, PROB_BOTH_BOTTOM, PROB_ONLY_LEFT_TOP, \
-    # PROB_ONLY_LEFT_BOTTOM, PROB_FOOD_RED, PROB_GHOST_RED
-
-
-    # util.raiseNotDefined()
     bayesNet.setCPT(Y_POS_VAR, yFactor)
 
 
@@ -248,6 +242,7 @@ def fillObsCPT(bayesNet, gameState):
     for housePos in gameState.getPossibleHouses(): # house == house center
         for obsPos in gameState.getHouseWalls(housePos):
             obsVar = OBS_VAR_TEMPLATE % obsPos
+
             obsFactor = bn.Factor([obsVar], [GHOST_HOUSE_VAR, FOOD_HOUSE_VAR], bayesNet.variableDomainsDict())
             # print obsFactor
             for assignment in obsFactor.getAllPossibleAssignmentDicts():
@@ -282,28 +277,6 @@ def fillObsCPT(bayesNet, gameState):
             bayesNet.setCPT(obsVar, obsFactor)
     #         valsToPos[TOP_LEFT_VAL] = housePos
 
-    #         valsToPos[TOP_RIGHT_VAL] = housePos
-    #         valsToPos[BOTTOM_LEFT_VAL] = housePos
-    #         valsToPos[BOTTOM_RIGHT_VAL] = housePos
-            
-    # # print valsToPos
-
-
-        # print assignment
-
-    # ghostHouseFactor = bn.Factor([GHOST_HOUSE_VAR], [X_POS_VAR, Y_POS_VAR], bayesNet.variableDomainsDict())
-    # for assignment in ghostHouseFactor.getAllPossibleAssignmentDicts():
-    #     print assignment
-
-
-    # print bottomLeftPos
-    # print topLeftPos
-    # print bottomRightPos
-    # print topRightPos
-    "*** YOUR CODE HERE ***"
-    # for #possible positions
-    #     for #possible walls
-    #         for #over assignments
 
     # bayesNet.setCPT(GHOST_HOUSE_VAR, ghostHouseFactor)
 
