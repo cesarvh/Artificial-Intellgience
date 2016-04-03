@@ -99,9 +99,17 @@ def joinFactors(factors):
                     "Input factors: \n" +
                     "\n".join(map(str, factors)))
 
+    for factor in factors:
+        for assignment in factor.getAllPossibleAssignmentDicts():
+            
+            print factor.unconditionedVariables()
+
+        print "pass"
+
 
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+
+    print "=====^"
 
 
 def eliminateWithCallTracking(callTrackingList=None):
