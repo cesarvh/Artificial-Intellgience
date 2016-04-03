@@ -107,15 +107,13 @@ def joinFactors(factors):
         for unconditionedVar in factor.unconditionedVariables():
             notGivens.add(unconditionedVar)
             domainsDic[unconditionedVar] = factor.variableDomainsDict()[unconditionedVar]
-
+    
     for factor in factors:
-        for conditionedVar in factor.conditionedVar():
-            if conditionedVar in notGivens:
-                notGivens.remove(conditionedVar)
-            givens.add(conditionedVar)
+        for conditionedVar in factor.conditionedVariables():
+            if conditionedVar not in notGivens:
+                givens.add(conditionedVar)
             domainsDic[conditionedVar] =  factor.variableDomainsDict()[conditionedVar]
     
-     
 
         # for assign
 
