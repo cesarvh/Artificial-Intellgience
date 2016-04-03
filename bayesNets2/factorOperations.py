@@ -98,12 +98,26 @@ def joinFactors(factors):
                     "\nappear in more than one input factor.\n" + 
                     "Input factors: \n" +
                     "\n".join(map(str, factors)))
-
-    givens = set()
     
+    givens = set()
+    notGivens = set()
+    domainsDic = {}
+
     for factor in factors:
-        for conditionedVar in factor.conditionedVariables():
-            print conditionedVar
+        for unconditionedVar in factor.unconditionedVariables():
+            notGivens.add(unconditionedVar)
+            domainsDic[unconditionedVar] = factor.variableDomainsDict()[unconditionedVar]
+
+    for factor in factors:
+        for conditionedVar in factor.conditionedVar():
+            if conditionedVar in notGivens:
+                notGivens.remove(conditionedVar)
+            givens.add(conditionedVar)
+            domainsDic[conditionedVar] =  factor.variableDomainsDict()[conditionedVar]
+    
+     
+
+        # for assign
 
         # for assignment in factor.getAllPossibleAssignmentDicts():
             
