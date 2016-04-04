@@ -99,34 +99,6 @@ def joinFactors(factors):
                     "Input factors: \n" +
                     "\n".join(map(str, factors)))
     
-    condVars = set()
-    uncondVars = set()
-    domainsDic = {}
-
-    for factor in factors:
-        for unconditionedVar in factor.unconditionedVariables():
-            uncondVars.add(unconditionedVar)
-            domainsDic[unconditionedVar] = factor.variableDomainsDict()[unconditionedVar]
-    
-    for factor in factors:
-        for conditionedVar in factor.conditionedVariables():
-            if conditionedVar not in uncondVars:
-                condVars.add(conditionedVar)
-            domainsDic[conditionedVar] =  factor.variableDomainsDict()[conditionedVar]
-    
-    newFactor = Factor(uncondVars, condVars, domainsDic)
-    # print newFactor
-
-    for assignment in newFactor.getAllPossibleAssignmentDicts():
-        totalProb = 1.0
-        for factor in factors:
-            prob = factor.getProbability(assignment)
-            totalProb *= prob
-            newFactor.setProbability(assignment, totalProb)
-
-    return newFactor
-
-
 
     unknown = set()
     given = set()
@@ -140,7 +112,7 @@ def joinFactors(factors):
             unknown.add(unconditionedVar)
             varsDomainDict[unconditionedVar] = factor.variableDomainsDict()[unconditionedVar]
 
-    for factor in factors:
+    # for factor in factors:
         for conditionedVar in factor.conditionedVariables():
             if conditionedVar not in unknown:
                 given.add(conditionedVar)

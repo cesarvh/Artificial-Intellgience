@@ -24,7 +24,7 @@ def inferenceByEnumeration(bayesNet, queryVariables, evidenceDict):
     This function performs a probabilistic inference query that
     returns the factor:
 
-    P(queryVariables | evidenceDict)
+    P(queryVariables
 
     bayesNet:       The Bayes Net on which we are making a query.
     queryVariables: A list of the variables which are unconditioned in

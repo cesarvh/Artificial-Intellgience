@@ -422,21 +422,20 @@ class VPIAgent(BayesAgent):
         leftExpectedValue = 0.0
         rightExpectedValue = 0.0
          # GHOST_COLLISION_REWARD, WON_GAME_REWARD
-        totalsTable = inference.inferenceByVariableElimination(self.bayesNet, FOOD_HOUSE_VAR, evidence, eliminationOrder)
 
+        totalsTable = inference.inferenceByVariableElimination(self.bayesNet, [FOOD_HOUSE_VAR, GHOST_HOUSE_VAR], evidence, eliminationOrder)
 
         total = 0
 
         for assignment in totalsTable.getAllPossibleAssignmentDicts():
             prob = totalsTable.getProbability(assignment)
-
             rightExpectedValue += (prob * GHOST_COLLISION_REWARD)
             rightExpectedValue *= -1
 
             leftExpectedValue += (prob * WON_GAME_REWARD)
             leftExpectedValue *= -1
 
-
+        # print totalsTable
         return leftExpectedValue, rightExpectedValue
 
     def getExplorationProbsAndOutcomes(self, evidence):
@@ -498,10 +497,14 @@ class VPIAgent(BayesAgent):
         determine the expected value of acting with this extra evidence.
         """
 
-        expectedValue = 0
+        expectedValue = 0.0
 
         "*** YOUR CODE HERE ***"
-        # util.raiseNotDefined()
+
+        for evi in self.getExplorationProbsAndOutcomes(evidence):
+            pNewEvi = evi[0]
+            cEV = self.computeEnterValues(evi[1], enterEliminationOrder)
+            expectedValue += max(cEV) * pNewEvi
 
         return expectedValue
 
