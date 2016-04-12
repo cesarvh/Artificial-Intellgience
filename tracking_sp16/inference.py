@@ -185,8 +185,23 @@ class InferenceModule:
     def getObservationProb(self, noisyDistance, pacmanPosition, ghostPosition, jailPosition):
         """
         Return the probability P(noisyDistance | pacmanPosition, ghostPosition).
+                                    observaton | 
         """
-        "*** YOUR CODE HERE ***"
+        # "*** YOUR CODE HERE ***"
+        # However, there is the special case of jail that we have to handle as well. Specifically, when we capture a ghost and send it to the jail location, our distance sensor deterministically returns None, and nothing else. So, if the ghost's position is the jail position, then the observation is None with probability 1, and everything else with probability 0. 
+
+        # Conversely, if the distance reading is not None, then the ghost is in jail with probability 0. If the distance reading is None, then the ghost is in jail with probability 1. Make sure you handle this special case in your implementation.
+
+        if ghostPosition == jailPosition:
+            return 1.0 if (noisyDistance == None) else 0.0
+
+        if noisyDistance == None:
+            return 1.0 if (ghostPosition == jailPosition) else 0.0
+
+        return busters.getObservationProbability(noisyDistance, manhattanDistance(pacmanPosition, ghostPosition))
+
+        
+
 
     def setGhostPosition(self, gameState, ghostPosition, index):
         """
