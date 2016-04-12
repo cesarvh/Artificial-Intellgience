@@ -24,7 +24,10 @@ class DiscreteDistribution(dict):
     """
     A DiscreteDistribution models belief distributions and weight distributions
     over a finite set of discrete keys.
+    
     """
+    #     keys are the different discrete elements of our distribution, and the corresponding values are proportional to the belief or weight that the distribution assigns that element
+
     def __getitem__(self, key):
         self.setdefault(key, 0)
         return dict.__getitem__(self, key)
@@ -74,7 +77,12 @@ class DiscreteDistribution(dict):
         >>> empty
         {}
         """
-        "*** YOUR CODE HERE ***"
+        z = float(self.total())
+        if z  == 0: return 
+
+        for key, value in self.items():
+            self[key] = float(value) / float(z)
+
 
     def sample(self):
         """
@@ -98,6 +106,24 @@ class DiscreteDistribution(dict):
         0.0
         """
         "*** YOUR CODE HERE ***"
+
+        dictCopy = self.copy()
+        dictCopy.normalize()
+        currInterval = 0.0
+        intervals = dictCopy
+
+        for k, v in dictCopy.items():
+            if not float(dictCopy[k] == 0):
+                currInterval += float(dictCopy[k])
+                intervals[k] = currInterval
+            else:
+                del intervals[k]
+
+        u = random.random()
+
+        for k, v in dictCopy.items():
+            if u < v:
+                return k
 
 
 class InferenceModule:
