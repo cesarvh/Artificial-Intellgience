@@ -375,13 +375,15 @@ class ParticleFilter(InferenceModule):
         particleAmt = self.numParticles
         legals = self.legalPositions
         self.particles = []
+        particlesPlaced = 0
 
+        particlesPerSquare = particleAmt/len(legals)
         for legal in legals:
-            self.particles.append(legal)
-            # legal.setNumParticles(particleAmt)
-        # print self.particles
+            particlesPlaced = 0
+            while (particlesPlaced < particlesPerSquare):
+                self.particles.append(legal)
+                particlesPlaced += 1
 
-        "*** YOUR CODE HERE ***"
 
     def observeUpdate(self, observation, gameState):
         """
