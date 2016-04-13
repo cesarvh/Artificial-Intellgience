@@ -329,6 +329,25 @@ class ExactInference(InferenceModule):
         current position is known.
         """
         "*** YOUR CODE HERE ***"
+        # The elapseTime step should, for this problem, update the belief at every position on the map after one time step elapsing. Your agent has access to the action distribution for the ghost through self.getPositionDistribution. 
+
+        # In order to obtain the distribution over new positions for the ghost, given its previous position, use this line of code:
+
+        # newPosDist = self.getPositionDistribution(gameState, oldGhostPos)
+        # print newPosDist
+
+        newBeliefs = DiscreteDistribution()
+        
+        for position in self.allPositions:
+            newPosDist = self.getPositionDistribution(gameState, position)
+            for key, value in newPosDist.items():
+                b = self.beliefs[position]
+                newBeliefs[key] += value * b
+                
+        self.beliefs = newBeliefs
+
+
+
 
     def getBeliefDistribution(self):
         return self.beliefs
