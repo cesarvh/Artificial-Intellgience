@@ -141,3 +141,49 @@ class GreedyBustersAgent(BustersAgent):
             [beliefs for i, beliefs in enumerate(self.ghostBeliefs)
              if livingGhosts[i+1]]
         "*** YOUR CODE HERE ***"
+
+        #FIRST: find the most likely position of each remaining uncaptured ghost
+        maze = lambda ghost, pacman: self.distancer.getDistance(ghost, pacman)
+
+        # { gNum: (<location>, <distance>) }
+        ghostLocations = {}
+        i = 0
+        for belief in livingGhostPositionDistributions:
+            mostLikely = belief.argMax()
+            ghostLocations[mostLikely] = maze(pacmanPosition, mostLikely)
+            i += 1
+
+        goToGhost = argMin(ghostLocations)
+        minDistance = maze(goToGhost, pacmanPosition)
+        move = None
+
+        for action in gameState.getLegalPacmanActions():
+            successor = Actions.getSuccessor(pacmanPosition, action)
+            currentDistance = maze(goToGhost, successor)
+            if (currentDistance < minDistance):
+                move = action
+                minDistance = currentDistance
+        return move
+
+
+def argMin(dict):
+    """
+    Returns the key with the lowest value.
+    Credz to the staff because all i did was change max to min :)
+    """
+    if len(dict.keys()) == 0: return None
+    all = dict.items()
+    values = [x[1] for x in all]
+    minIndex = values.index(min(values))
+    return all[minIndex][0]
+
+
+
+
+
+
+
+
+
+
+
