@@ -377,12 +377,18 @@ class ParticleFilter(InferenceModule):
         self.particles = []
         particlesPlaced = 0
 
-        particlesPerSquare = particleAmt/len(legals)
-        for legal in legals:
-            particlesPlaced = 0
-            while (particlesPlaced < particlesPerSquare):
+        # particlesPerSquare = particleAmt/len(legals)
+        while particlesPlaced < particleAmt:
+            for legal in legals:
                 self.particles.append(legal)
                 particlesPlaced += 1
+
+
+        # for legal in legals:
+        #     particlesPlaced = 0
+        #     while (particlesPlaced < particlesPerSquare):
+        #         self.particles.append(legal)
+        #         particlesPlaced += 1
 
 
     def observeUpdate(self, observation, gameState):
@@ -399,12 +405,53 @@ class ParticleFilter(InferenceModule):
         """
         "*** YOUR CODE HERE ***"
 
+        pacmanPosition = gameState.getPacmanPosition()
+        jailPosition = self.getJailPosition()
+        weightDist = DiscreteDistribution()
+
+        for particle in self.particles:
+            weightDist[particle] += self.getObservationProb(observation, pacmanPosition, particle, jailPosition)
+            # += because multiple particles in same location!
+
+        weightDist.normalize()
+
+        newParticles = [weightDist.sample() for i in range(int(len(self.particles)))]
+
+        if weightDist.total() == 0:
+            self.initializeUniformly(gameState)
+            return
+
+        self.particles = newParticles
+
+
+        # for position in self.allPositions:
+        #     newBelief = self.getObservationProb(observation, pacmanPosition, position, jailPosition)
+        #     self.beliefs[position] *= newBelief
+
+        # self.beliefs.normalize()
+
+        # There is one special case that a correct implementation must handle. 
+        # When all particles receive zero weight, the list of particles should be 
+        # reinitialized by calling initializeUniformly. The total method of the DiscreteDistribution may be useful.
+
+        # for position in self.allPositions:
+        #     newBelief = self.getObservationProb(observation, pacmanPosition, position, jailPosition)
+        #     self.beliefs[position] *= newBelief
+
+        #     # if all particles have 0 weight: reinitialize
+        #     if beliefs.total() == 0:
+        #         self.initializeUniformly(gameState)
+
+        # self.beliefs.normalize()
+
+
     def elapseTime(self, gameState):
         """
         Sample each particle's next state based on its current state and the
         gameState.
         """
         "*** YOUR CODE HERE ***"
+
 
     def getBeliefDistribution(self):
         """
@@ -416,7 +463,7 @@ class ParticleFilter(InferenceModule):
         distrib = DiscreteDistribution()
         particlePos = self.particles
         for particle in particlePos:
-            distrib[particle] = 1.0/self.numParticles
+            distrib[particle] += 1.0
         distrib.normalize()
         return distrib
 
