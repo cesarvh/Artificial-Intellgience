@@ -512,6 +512,21 @@ class JointParticleFilter(ParticleFilter):
         self.particles = []
         "*** YOUR CODE HERE ***"
 
+        ghostPositions = list(itertools.product(self.legalPositions, repeat = self.numGhosts))
+        random.shuffle(ghostPositions)
+        numGhostPositions = len(ghostPositions)
+
+        while self.numParticles >= numGhostPositions:
+            self.particles += ghostPositions
+            self.numParticles = self.numParticles - numGhostPositions
+
+        i = 0
+        while i != self.numParticles:
+            self.particles += ghostPositions[i]
+            i += 1
+
+
+
     def addGhostAgent(self, agent):
         """
         Each ghost agent is registered separately and stored (in case they are
