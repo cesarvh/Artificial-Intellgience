@@ -462,13 +462,23 @@ class ParticleFilter(InferenceModule):
                 
         # self.beliefs = newBeliefs
 
-        beliefDist = self.getBeliefDistribution()
-        newParticles = []
-        for i in range(len(self.particles)):
-            new = self.getPositionDistribution(gameState, self.particles[i])
-            newParticles.append(new.sample())
+        # newParticles = []
+        from collections import Counter
 
-        self.particles = newParticles
+        counter = Counter(self.particles)
+        index = 0
+        for particle, count in counter.items():
+            newPosDist = self.getPositionDistribution(gameState, particle)
+            for i in range(count):
+                self.particles[index] = newPosDist.sample()
+                index += 1
+
+
+        # for i in range(len(self.particles)):
+        #     newPosDist = self.getPositionDistribution(gameState, self.particles[i])
+        #     self.particles[i] = newPosDist.sample()
+
+        # self.particles = newParticles
 
 
     def getBeliefDistribution(self):
@@ -588,7 +598,6 @@ class JointParticleFilter(ParticleFilter):
         pacmanPosition = gameState.getPacmanPosition()
         weightDist = DiscreteDistribution()
 
-        from collections import Counter
         for particle in self.particles:
             particleProb = 1
             for i in range(self.numGhosts):
