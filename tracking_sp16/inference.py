@@ -624,10 +624,22 @@ class JointParticleFilter(ParticleFilter):
 
             # now loop through and update each entry in newParticle...
             "*** YOUR CODE HERE ***"
+            prevGhostPositions = list(oldParticle)
+            for i in range(self.numGhosts):
+                newPosDist = self.getPositionDistribution(gameState, prevGhostPositions, i, self.ghostAgents[i])
+                newParticle[i] = newPosDist.sample()
 
             """*** END YOUR CODE HERE ***"""
             newParticles.append(tuple(newParticle))
         self.particles = newParticles
+
+        # beliefDist = self.getBeliefDistribution()
+        # newParticles = []
+        # for i in range(len(self.particles)):
+        #     new = self.getPositionDistribution(gameState, self.particles[i])
+        #     newParticles.append(new.sample())
+
+        # self.particles = newParticles
 
 
 # One JointInference module is shared globally across instances of MarginalInference
