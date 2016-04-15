@@ -595,7 +595,7 @@ class JointParticleFilter(ParticleFilter):
                 jailPosition = self.getJailPosition(i)
                 obs = self.getObservationProb(observation[i], pacmanPosition, particle[i], jailPosition)
                 particleProb *= obs
-            weightDist[particle] += particleProb * 2
+            weightDist[particle] += particleProb * self.numGhosts
 
         weightDist.normalize()
         newParticles = [weightDist.sample() for i in range(int(len(self.particles)))]
