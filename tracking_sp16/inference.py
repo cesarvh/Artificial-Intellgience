@@ -512,57 +512,25 @@ class JointParticleFilter(ParticleFilter):
         self.particles = []
         "*** YOUR CODE HERE ***"
 
-        ghostPositions = list(itertools.product(self.legalPositions, repeat = self.numGhosts))
+        ghostPositions = [perm for perm in itertools.product(self.legalPositions, repeat = self.numGhosts) if len(set(perm)) == self.numGhosts]
         random.shuffle(ghostPositions)
         numGhostPositions = len(ghostPositions)
-        numParticles = self.numParticles
 
-        # self.particles = ghostPositions[:self.numParticles]
-        if numParticles <= numGhostPositions:
+        # i = 0
+        # while i + numGhostPositions < self.numParticles:
+        #     self.particles += ghostPositions
+        #     i += numGhostPositions
+        # self.particles += ghostPositions[:self.numParticles - i]
+
+        if self.numParticles <= numGhostPositions:
             self.particles = ghostPositions[:self.numParticles]
-
         else:
-            while len(self.particles) != numParticles:
+            while len(self.particles) != self.numParticles:
                 for ghostPosition in ghostPositions:
-                    if len(self.particles) != numParticles:
+                    if len(self.particles) != self.numParticles:
                         self.particles.append(ghostPosition)
                     else:
                         break
-
-
-
-        # i = 0
-        # while i != numParticles:
-        #     while i != numGhostPositions:
-        #         self.particles.append(ghostPositions[i])
-        #         i += 1
-
-        # diff = numGhostPositions - numParticles
-        # if diff > 0:
-        #     i2 = 0
-        #     while i != numParticles:
-        #         self.particles.append(ghostPositions[i2])
-        #         i += 1
-        #         i2 += 1
-
-        # while numParticles >= numGhostPositions:
-        #     self.particles += ghostPositions
-        #     numParticles -= numGhostPositions
-
-
-        # self.particles += ghostPositions[0: numParticles - 1]
-
-        # this is assuming # particles < # ghostPositions
-        # print "len particles is " 
-        # print len(self.particles)
-        # print "num particles is "
-        # print self.numParticles
-        # print "num ghost positions is"
-        # print numGhostPositions
-
-
-
-
 
     def addGhostAgent(self, agent):
         """
@@ -620,15 +588,16 @@ class JointParticleFilter(ParticleFilter):
         pacmanPosition = gameState.getPacmanPosition()
         weightDist = DiscreteDistribution()
 
+        from collections import Counter
         for particle in self.particles:
             particleProb = 1
             for i in range(self.numGhosts):
                 jailPosition = self.getJailPosition(i)
                 obs = self.getObservationProb(observation[i], pacmanPosition, particle[i], jailPosition)
                 particleProb *= obs
-            weightDist[particle] += particleProb
+            weightDist[particle] += particleProb * 2
 
-        # weightDist.normalize()
+        weightDist.normalize()
         newParticles = [weightDist.sample() for i in range(int(len(self.particles)))]
 
         if weightDist.total() == 0:
