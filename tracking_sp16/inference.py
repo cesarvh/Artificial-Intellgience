@@ -195,8 +195,8 @@ class InferenceModule:
         if ghostPosition == jailPosition:
             return 1.0 if (noisyDistance == None) else 0.0
 
-        if noisyDistance == None:
-            return 1.0 if (ghostPosition == jailPosition) else 0.0
+        if noisyDistance == None and ghostPosition != jailPosition:
+            return 0.0
 
         return busters.getObservationProbability(noisyDistance, manhattanDistance(pacmanPosition, ghostPosition))
 
@@ -515,15 +515,52 @@ class JointParticleFilter(ParticleFilter):
         ghostPositions = list(itertools.product(self.legalPositions, repeat = self.numGhosts))
         random.shuffle(ghostPositions)
         numGhostPositions = len(ghostPositions)
+        numParticles = self.numParticles
 
-        while self.numParticles >= numGhostPositions:
-            self.particles += ghostPositions
-            self.numParticles = self.numParticles - numGhostPositions
+        # self.particles = ghostPositions[:self.numParticles]
+        if numParticles <= numGhostPositions:
+            self.particles = ghostPositions[:self.numParticles]
 
-        i = 0
-        while i != self.numParticles:
-            self.particles += ghostPositions[i]
-            i += 1
+        else:
+            while len(self.particles) != numParticles:
+                for ghostPosition in ghostPositions:
+                    if len(self.particles) != numParticles:
+                        self.particles.append(ghostPosition)
+                    else:
+                        break
+
+
+
+        # i = 0
+        # while i != numParticles:
+        #     while i != numGhostPositions:
+        #         self.particles.append(ghostPositions[i])
+        #         i += 1
+
+        # diff = numGhostPositions - numParticles
+        # if diff > 0:
+        #     i2 = 0
+        #     while i != numParticles:
+        #         self.particles.append(ghostPositions[i2])
+        #         i += 1
+        #         i2 += 1
+
+        # while numParticles >= numGhostPositions:
+        #     self.particles += ghostPositions
+        #     numParticles -= numGhostPositions
+
+
+        # self.particles += ghostPositions[0: numParticles - 1]
+
+        # this is assuming # particles < # ghostPositions
+        # print "len particles is " 
+        # print len(self.particles)
+        # print "num particles is "
+        # print self.numParticles
+        # print "num ghost positions is"
+        # print numGhostPositions
+
+
 
 
 
@@ -558,6 +595,54 @@ class JointParticleFilter(ParticleFilter):
         the DiscreteDistribution may be useful.
         """
         "*** YOUR CODE HERE ***"
+
+
+        # pacmanPosition = gameState.getPacmanPosition()
+        # jailPosition = self.getJailPosition()
+        # weightDist = DiscreteDistribution()
+
+        # for particle in self.particles:
+        #     weightDist[particle] += self.getObservationProb(observation, pacmanPosition, particle, jailPosition)
+        #     # += because multiple particles in same location!
+
+        # weightDist.normalize()
+
+        # newParticles = [weightDist.sample() for i in range(int(len(self.particles)))]
+
+        # if weightDist.total() == 0:
+        #     self.initializeUniformly(gameState)
+        #     return
+
+        # self.particles = newParticles
+
+        # weight and resample the entire list of particles based on the observation of all ghost distances
+
+        pacmanPosition = gameState.getPacmanPosition()
+        weightDist = DiscreteDistribution()
+
+        for particle in self.particles:
+            particleProb = 1
+            for i in range(self.numGhosts):
+                jailPosition = self.getJailPosition(i)
+                obs = self.getObservationProb(observation[i], pacmanPosition, particle[i], jailPosition)
+                particleProb *= obs
+            weightDist[particle] += particleProb
+
+        # weightDist.normalize()
+        newParticles = [weightDist.sample() for i in range(int(len(self.particles)))]
+
+        if weightDist.total() == 0:
+            self.initializeUniformly(gameState)
+            return
+
+        # print(newParticles)
+        self.particles = newParticles
+        # random.shuffle(self.particles)
+
+
+
+
+
 
     def elapseTime(self, gameState):
         """
