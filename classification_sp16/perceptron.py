@@ -80,7 +80,16 @@ class PerceptronClassifier(object):
                 if callback is not None: callback()
 
                 "*** YOUR CODE HERE ***"
-                util.raiseNotDefined()
+                # print(input_train_data)
+                actual = label_train_data[i]
+                datum = input_train_data[i]
+                classified = self.classify(list(datum))[0]
+                # print(classified)
+                # print(actual)
+                if classified != actual:
+                	self.weights[actual] += datum[actual]
+                	self.weights[classified] -= datum[classified]
+                
 
     def classify(self, input_data):
         """
