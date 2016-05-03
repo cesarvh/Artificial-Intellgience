@@ -80,15 +80,14 @@ class PerceptronClassifier(object):
                 if callback is not None: callback()
 
                 "*** YOUR CODE HERE ***"
-                # print(input_train_data)
                 actual = label_train_data[i]
+                # label train data is a list of integers representing the labels
                 datum = input_train_data[i]
-                classified = self.classify(list(datum))[0]
-                # print(classified)
-                # print(actual)
+                # input train data is a list of util.Counters, which are weights
+                classified = self.classify([datum])[0]
                 if classified != actual:
-                	self.weights[actual] += datum[actual]
-                	self.weights[classified] -= datum[classified]
+                	self.weights[actual] += datum
+                	self.weights[classified] -= datum
                 
 
     def classify(self, input_data):
