@@ -117,7 +117,11 @@ class PerceptronClassifier(object):
         best100Features = []
 
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        weights = self.weights[label]
+        weights = weights.sortedKeys()
+        best100Features = []
+        for i in range(0, 101):
+        	best100Features.append(weights[i])
 
         return best100Features
 

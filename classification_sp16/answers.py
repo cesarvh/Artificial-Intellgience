@@ -21,6 +21,7 @@ def q2():
 
 def q3():
     "*** YOUR CODE HERE ***"
+    return 'a'
 
 def q7():
     "*** YOUR CODE HERE ***"
