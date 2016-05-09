@@ -4,7 +4,7 @@
 # educational purposes provided that (1) you do not distribute or publish
 # solutions, (2) you retain this notice, and (3) you provide clear
 # attribution to UC Berkeley, including a link to http://ai.berkeley.edu.
-#
+
 # Attribution Information: The Pacman AI projects were developed at UC Berkeley.
 # The core projects and autograders were primarily created by John DeNero
 # (denero@cs.berkeley.edu) and Dan Klein (klein@cs.berkeley.edu).
@@ -111,7 +111,6 @@ class GradientDescentSolver(Solver):
         vel_vars = [tf.Variable(np.zeros(param_var.get_shape(), dtype=np.float32)) for param_var in param_vars]
         tfu.get_session().run([vel_var.initializer for vel_var in vel_vars])
         updates = []
-        "*** YOUR CODE HERE ***"
 
         for param in range(0, len(param_vars)):
 
@@ -189,7 +188,6 @@ class GradientDescentSolver(Solver):
         train_losses = []
         val_losses = []
         for iter_ in range(self.iterations):
-
 
             train_loss = session.run([loss_tensor] + update_ops, feed_dict={placeholders[0]: train_data[0], placeholders[1]: train_data[1]})[0]
             val_loss = session.run(loss_tensor, feed_dict={placeholders[0]: val_data[0], placeholders[1]: val_data[1]})
@@ -300,6 +298,7 @@ class StochasticGradientDescentSolver(GradientDescentSolver):
             train_loss = session.run([loss_tensor] + update_ops, feed_dict={placeholders[0]: trainData[0], placeholders[1]: trainData[1]})[0]
 
             val_loss = session.run(loss_tensor,   feed_dict={placeholders[0]: validData[0], placeholders[1]: validData[1]})
+
             # train_loss should be the loss of this iteration using only the training data that was used for the updates
             # val_loss should be the loss of this iteration using the same amount of data used for the updates, but using the validation data instead
             train_losses.append(train_loss)
@@ -386,6 +385,7 @@ class MinibatchStochasticGradientDescentSolver(GradientDescentSolver):
         update_ops = [tf.assign(old_var, new_var_or_tensor) for (old_var, new_var_or_tensor) in updates]
         train_losses = []
         val_losses = []
+
 
         trainingDataGenerator = MinibatchIndefinitelyGenerator(train_data, self.batch_size ,self.shuffle)
         validationDataGenerator = MinibatchIndefinitelyGenerator(val_data, self.batch_size, self.shuffle)

@@ -4,7 +4,7 @@
 # educational purposes provided that (1) you do not distribute or publish
 # solutions, (2) you retain this notice, and (3) you provide clear
 # attribution to UC Berkeley, including a link to http://ai.berkeley.edu.
-#
+
 # Attribution Information: The Pacman AI projects were developed at UC Berkeley.
 # The core projects and autograders were primarily created by John DeNero
 # (denero@cs.berkeley.edu) and Dan Klein (klein@cs.berkeley.edu).
@@ -78,6 +78,7 @@ class PerceptronClassifier(object):
             for i in range(len(input_train_data)):
                 # the callback plots the line in the Pacman Plot
                 if callback is not None: callback()
+
                 label = self.classify(input_train_data[i])
                 train_label = label_train_data[i]
                 if label != train_label:
@@ -113,6 +114,34 @@ class PerceptronClassifier(object):
             raise ValueError("input_datum_or_data should be a util.Counter, "
                              "list or tuple, but a %r was given" % input_datum_or_data)
 
+
+#                 "*** YOUR CODE HERE ***"
+#                 actual = label_train_data[i]
+#                 # label train data is a list of integers representing the labels
+#                 datum = input_train_data[i]
+#                 # input train data is a list of util.Counters, which are weights
+#                 classified = self.classify([datum])[0]
+#                 if classified != actual:
+#                   self.weights[actual] += datum
+#                   self.weights[classified] -= datum
+                
+
+#     def classify(self, input_data):
+#         """
+#         Classifies each datum as the label that most closely matches the prototype vector
+#         for that label.  See the project description for details.
+
+#         Recall that a datum is a util.counter...
+#         """
+#         guesses = []
+#         for datum in input_data:
+#             vectors = util.Counter()
+#             for l in self.legal_labels:
+#                 vectors[l] = self.weights[l] * datum
+#             guesses.append(vectors.argMax())
+#         return guesses
+# >>>>>>> eaa5331875a67e314efab105a233a613761fdc24
+
     def accuracy(self, input_data, label_data):
         predictions = self.classify(input_data)
         accuracy_count = [predictions[i] == label_data[i] for i in range(len(label_data))].count(True)
@@ -125,11 +154,13 @@ class PerceptronClassifier(object):
         best100Features = []
 
         "*** YOUR CODE HERE ***"
+
         weightsVector = self.weights[label]
         sortedFeatures = weightsVector.sortedKeys()
 
         for i in range(0, 100):
             best100Features.append(sortedFeatures[i])
+
 
 
         return best100Features
